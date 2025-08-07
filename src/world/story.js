@@ -82,15 +82,49 @@ export function createStory(state) {
       addLog('Plot twist: Przewidywane zwolnienia i pivot.');
     }
     // ambient micro-events to build climate
-    if (!flags._amb1 && t >= 12 * 60) {
-      flags._amb1 = true; sequence([
-        ['Open space', '„Słyszałeś? CFO nie pije już kawy, tylko ROI.”'],
-      ]);
+    if (!flags._noonScene && t >= 12 * 60) {
+      flags._noonScene = true;
+      sequence([
+        ['Narrator', '12:00. Kuchnia pachnie pizzą, open space – deadlinem.'],
+        ['Ty', 'Masz 10 minut. Co robisz?'],
+      ], () => {
+        openChoice(state, '12:00 – przerwa', 'Wybierz:', [
+          { id: 'pizza', label: 'Pizza + espresso (−8 stres, +1 kawa)' },
+          { id: 'deploy', label: 'Podejrzyj deploy z IT (+5 rep IT, +2 stres)' },
+        ], (pick) => {
+          if (pick === 'pizza') {
+            state.player.stress = Math.max(0, state.player.stress - 8);
+            state.player.coffee = (state.player.coffee||0) + 1;
+            addLog('12:00: Wybrałeś pizzę i kawę.');
+          } else {
+            state.rep.it = (state.rep.it||0) + 5;
+            state.player.stress = Math.min(100, state.player.stress + 2);
+            addLog('12:00: Podglądałeś deploy z IT.');
+          }
+        });
+      });
     }
-    if (!flags._amb2 && t >= 15 * 60) {
-      flags._amb2 = true; sequence([
-        ['Korytarz', '„Był fire-drill, ale ogień w mailach większy.”'],
-      ]);
+    if (!flags._pmScene && t >= 15 * 60) {
+      flags._pmScene = true;
+      sequence([
+        ['Narrator', '15:00. HR organizuje szybkie „check‑in”, PM szlifuje slajdy.'],
+        ['Ty', 'Nie rozdwoisz się.'],
+      ], () => {
+        openChoice(state, '15:00 – wybór', 'Gdzie idziesz?', [
+          { id: 'hr', label: 'HR check‑in (+6 rep HR, −3 stres)' },
+          { id: 'pm', label: 'Pomóż PM w slajdach (+6 rep MGMT, +1 JIRA)' },
+        ], (pick) => {
+          if (pick === 'hr') {
+            state.rep.hr = (state.rep.hr||0) + 6;
+            state.player.stress = Math.max(0, state.player.stress - 3);
+            addLog('15:00: Wybrałeś ludzi.');
+          } else {
+            state.rep.mgmt = (state.rep.mgmt||0) + 6;
+            state.player.jira = (state.player.jira||0) + 1;
+            addLog('15:00: Wybrałeś slajdy.');
+          }
+        });
+      });
     }
     if (!flags._amb3 && t >= 17 * 60 + 20) {
       flags._amb3 = true; sequence([
