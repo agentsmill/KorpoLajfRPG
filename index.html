@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CorpoLife RPG – Pixel Art</title>
+    <meta name="description" content="Satyryczna gra RPG o życiu w polskiej korporacji – pixel art.">
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="wrapper">
+      <canvas id="gameCanvas" width="768" height="576"></canvas>
+      <div id="overlay" class="hidden"></div>
+      <div id="dialog" class="hidden">
+        <div id="dialogName"></div>
+        <div id="dialogText"></div>
+        <div id="dialogHint">[E] – kontynuuj • [Esc] – zamknij</div>
+      </div>
+      <div id="hud">
+        <div class="hud-item">☕ Kawa: <span id="hudCoffee">0</span></div>
+        <div class="hud-item">📈 Stres: <span id="hudStress">0</span>/100</div>
+        <div class="hud-item">🧩 JIRA: <span id="hudJira">0</span></div>
+        <div class="hud-item">🕒 <span id="hudClock">09:00</span></div>
+        <div class="hud-item">🎯 Zadanie: <span id="hudQuest">—</span></div>
+        <button id="btnMusic" class="btn">🎵 Lo‑fi: ON</button>
+        <button id="btnPopups" class="btn">🔔 Popups: ON</button>
+        <button id="btnHelp" class="btn">❓</button>
+        <button id="btnLog" class="btn">📓</button>
+        <button id="btnBingo" class="btn hidden">🧠 Bingo</button>
+      </div>
+      <div id="toast" class="toast hidden"></div>
+      <div id="helpModal" class="modal hidden">
+        <div class="modal-title">Jak grać – CorpoLife RPG</div>
+        <div class="modal-body">
+          - Ruch: WASD/strzałki • Rozmowa: E • Zamknij: Esc<br/>
+          - Muzyka: przycisk 🎵 • Pomoc: ❓ • Dziennik: 📓 • Bingo: 🧠<br/>
+          - Stres spowalnia postać. Kawa i roślina „Stefan” obniżają stres.<br/>
+          - Codzienne eventy: daily o 9:05, randomowe side-questy w ciągu dnia.<br/>
+          - Cel: przetrwać dzień, zdobyć reputację w IT/HR/Management i nie spalić się.
+        </div>
+        <div class="modal-actions">
+          <button id="btnHelpClose" class="btn">OK</button>
+        </div>
+      </div>
+
+      <div id="logModal" class="modal hidden">
+        <div class="modal-title">Dziennik zadań</div>
+        <div id="logList" class="modal-body mono"></div>
+        <div class="modal-actions">
+          <button id="btnLogClose" class="btn">Zamknij</button>
+        </div>
+      </div>
+
+      <div id="bingoModal" class="modal hidden">
+        <div class="modal-title">Buzzword Bingo (Daily)</div>
+        <div id="bingoGrid" class="bingo-grid"></div>
+        <div class="modal-actions">
+          <button id="btnBingoClose" class="btn">Wyjdź</button>
+        </div>
+      </div>
+
+      <div id="choiceModal" class="modal hidden">
+        <div id="choiceTitle" class="modal-title">Wybór</div>
+        <div id="choiceBody" class="modal-body"></div>
+        <div id="choiceList" class="choices"></div>
+      </div>
+    </div>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
+
+
