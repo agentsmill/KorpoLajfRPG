@@ -13,20 +13,30 @@ export function createStory(state) {
   };
 
   let activeSeq = null;
+  // cinematic state
+  state.cinematic = state.cinematic || { active: false, zoom: 1.6, focus: null };
 
   function start() {
     if (!flags.introDone) {
       sequence([
         ['Narrator', 'Poranek. Chmury jak backlog: ciężkie, ale na horyzoncie promień nadziei.'],
-        ['Narrator', 'Wchodzisz do open space, gdzie każde biurko to osobny wszechświat.'],
+        ['Narrator', 'Jesteś stażystą. Jeszcze pachniesz nowością, ale w oczach masz głód przygody.'],
+        ['Narrator', 'Mówią, że w tym biurze są frakcje: IT, HR i Management. Ale to tylko plotki… reputacja rodzi się z czynów.'],
+        ['Narrator', 'Wieść niesie też, że najciekawsze rzeczy dzieją się w kuchni. Kawa paruje, tajemnice krążą.'],
+        ['Narrator', 'Najpierw kilka zasad, potem stworzysz swój profil (talenty), a dzień zacznie się w Twoim boksie.'],
+        ['Narrator', 'Dziś masz przygotować raport na zarząd 17:30: człowiek + liczba + ryzyko.'],
+        ['Narrator', 'Twoja ścieżka nie jest rekrutacją do frakcji. To bycie człowiekiem w miejscu, gdzie liczby mówią głośniej.'],
       ], () => {
-        openChoice(state, 'Gdzie skierujesz pierwsze kroki?', 'To zdecyduje, komu zaufasz jako pierwszemu.',
-          [
-            { id: 'it', label: 'Do IT – po prawdę ukrytą w logach.' },
-            { id: 'hr', label: 'Do HR – po człowieczeństwo w procedurach.' },
-            { id: 'mgmt', label: 'Do Management – po sens w chaosie roadmapy.' },
-          ], (pick) => { flags.act1Choice = pick; flags.introDone = true; }
-        );
+        flags.introDone = true;
+        // Pokaż instrukcje, potem otwórz kreator talentów
+        try {
+          state.ui.helpModal?.classList.remove('hidden');
+          const once = () => {
+            state.ui.btnHelpClose?.removeEventListener('click', once);
+            state._openSkills?.();
+          };
+          state.ui.btnHelpClose?.addEventListener('click', once);
+        } catch (e) { state._openSkills?.(); }
       });
     }
   }
@@ -71,13 +81,43 @@ export function createStory(state) {
       ]);
       addLog('Plot twist: Przewidywane zwolnienia i pivot.');
     }
-    if (flags.twistDone && !flags.climaxDone && t >= 16 * 60 + 30) {
-      flags.climaxDone = true;
-      sequence([
-        ['CEO', 'Dziękuję za wasz wkład. Zmieniamy strategię. Nie wszyscy zostaną.'],
-        ['Ty', 'Nie oddamy naszej pracy bez walki. Zostaję po godzinach i kończę plan migracji.'],
+    // ambient micro-events to build climate
+    if (!flags._amb1 && t >= 12 * 60) {
+      flags._amb1 = true; sequence([
+        ['Open space', '„Słyszałeś? CFO nie pije już kawy, tylko ROI.”'],
       ]);
-      addLog('Kulminacja: walka o zespół.');
+    }
+    if (!flags._amb2 && t >= 15 * 60) {
+      flags._amb2 = true; sequence([
+        ['Korytarz', '„Był fire-drill, ale ogień w mailach większy.”'],
+      ]);
+    }
+    if (!flags._amb3 && t >= 17 * 60 + 20) {
+      flags._amb3 = true; sequence([
+        ['Open space', 'Cisza przed zarządem. Nawet ekspres przestał prychać.'],
+      ]);
+    }
+    if (flags.twistDone && !flags.climaxDone && t >= 17 * 60 + 30) {
+      flags.climaxDone = true;
+      // cinematic mode: zoom on board room
+      const ceo = state.npcs.find(n => n.id === 'ceo');
+      state.cinematic.active = true;
+      state.cinematic.zoom = 2.0;
+      state.cinematic.focus = ceo ? { x: ceo.x, y: ceo.y } : { x: state.player.x, y: state.player.y };
+      sequence([
+        ['Narrator', 'Szkło sali zarządu odbija twarze – jakbyś patrzył na różne wersje siebie.'],
+        ['CEO', 'Prosto. Jaki jest sens waszego istnienia w budżecie?'],
+        ['Narrator', 'Cisza, która waży jak decyzja.'],
+      ], () => {
+        state.cinematic.active = false;
+        // automatycznie otwórz dialog CEO, jeśli masz wejściówkę
+        if ((state.flags||{}).board_invite) {
+          state.dialogue.start('ceo', 'c1');
+        } else {
+          state.dialogue.start('ceo', 'start');
+        }
+      });
+      addLog('Kulminacja: zarząd i decyzje.');
     }
     if (!flags.ended && t >= 18 * 60) {
       flags.ended = true;

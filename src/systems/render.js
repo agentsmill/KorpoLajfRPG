@@ -18,36 +18,47 @@ function drawGrid(ctx, map, camera, canvas) {
       const screenX = x * TILE - offX;
       const screenY = y * TILE - offY;
 
-      // pastel floors/walls
-      ctx.fillStyle = tile.walkable ? '#1a2033' : '#14192b';
-      ctx.fillRect(screenX, screenY, TILE, TILE);
-      // grid highlight
-      ctx.strokeStyle = 'rgba(255,255,255,.04)';
-      ctx.strokeRect(screenX + 0.5, screenY + 0.5, TILE - 1, TILE - 1);
+      // RimWorld-like: distinct floors, walls and shadows
+      if (!tile.walkable) {
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(screenX, screenY, TILE, TILE);
+        // inner shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+        ctx.fillRect(screenX, screenY+TILE-3, TILE, 3);
+      } else {
+        const base = tile.type === 'desk' ? '#1b2440' : tile.type === 'kitchen' ? '#172035' : tile.type === 'meeting' ? '#16243a' : tile.type === 'server' ? '#101a2e' : '#151f36';
+        ctx.fillStyle = base;
+        ctx.fillRect(screenX, screenY, TILE, TILE);
+        // subtle checker for texture
+        if (((tileX + tileY) & 1) === 0) {
+          ctx.fillStyle = 'rgba(255,255,255,0.025)';
+          ctx.fillRect(screenX, screenY, TILE, TILE);
+        }
+      }
 
       // simple office accents
       if (tile.type === 'desk') {
-        ctx.fillStyle = '#2b3352';
-        ctx.fillRect(screenX + 2, screenY + 6, 12, 8);
-        ctx.fillStyle = '#7dd3fc';
-        ctx.fillRect(screenX + 3, screenY + 7, 5, 3);
+        // desk + monitor shadow
+        ctx.fillStyle = '#26334d'; ctx.fillRect(screenX + 2, screenY + 6, 12, 8);
+        ctx.fillStyle = '#7dd3fc'; ctx.fillRect(screenX + 3, screenY + 7, 5, 3);
+        ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(screenX+2, screenY+13, 12, 2);
       }
       if (tile.type === 'kitchen') {
-        ctx.fillStyle = '#2f3a63';
-        ctx.fillRect(screenX + 1, screenY + 1, 14, 14);
-        ctx.fillStyle = '#a5b4fc';
-        ctx.fillRect(screenX + 6, screenY + 6, 4, 4);
-        // coffee steam particles
-        drawSteam(ctx, screenX + 8, screenY + 6);
-        // Stefan plant
-        ctx.fillStyle = '#34d399';
-        ctx.fillRect(screenX + 3, screenY + 10, 2, 3);
-        ctx.fillRect(screenX + 2, screenY + 9, 4, 1);
+        // minimalistyczna kuchnia: jeden blat, okap, światło; bez mnożenia lodówek
+        ctx.fillStyle = '#263558'; ctx.fillRect(screenX + 1, screenY + 1, 14, 14);
+        // blat
+        ctx.fillStyle = '#1f2937'; ctx.fillRect(screenX + 2, screenY + 10, 12, 3);
+        // kubki/kapsułki
+        ctx.fillStyle = '#fbbf24'; ctx.fillRect(screenX + 4, screenY + 9, 1, 1);
+        ctx.fillStyle = '#93c5fd'; ctx.fillRect(screenX + 6, screenY + 9, 1, 1);
+        // lampka/okap
+        ctx.fillStyle = '#0f172a'; ctx.fillRect(screenX + 2, screenY + 3, 12, 1);
       }
-      if (tile.type === 'meeting') {
-        ctx.strokeStyle = '#2a3558';
-        ctx.strokeRect(screenX + 1, screenY + 1, 14, 14);
-      }
+      if (tile.type === 'plant') { ctx.fillStyle = '#34d399'; ctx.fillRect(screenX+6, screenY+8, 3, 5); ctx.fillStyle='#166534'; ctx.fillRect(screenX+5, screenY+7, 5, 1); }
+      if (tile.type === 'fridge') { ctx.fillStyle = '#94a3b8'; ctx.fillRect(screenX+3,screenY+3,10,12); ctx.fillStyle='#0f172a'; ctx.fillRect(screenX+4,screenY+6,1,2);} 
+      if (tile.type === 'espresso') { ctx.fillStyle = '#1f2937'; ctx.fillRect(screenX+4,screenY+8,8,4); ctx.fillStyle='#f59e0b'; ctx.fillRect(screenX+6,screenY+7,2,1); }
+      if (tile.type === 'meeting') { ctx.strokeStyle = '#2a3558'; ctx.strokeRect(screenX + 1, screenY + 1, 14, 14); }
+      if (tile.type === 'server') { ctx.fillStyle = '#0ea5e9'; ctx.fillRect(screenX+4, screenY+4, 2, 8); ctx.fillStyle = '#38bdf8'; ctx.fillRect(screenX+8, screenY+4, 2, 8); }
     }
   }
 }
@@ -65,6 +76,17 @@ function drawNPCs(ctx, npcs, camera) {
       ctx.fillRect(x - 3, y - 7, 2, 2);
       ctx.fillRect(x + 1, y - 7, 2, 2);
     }
+    // mini-ikonka frakcji nad NPC
+    const f = n.faction || 'neutral';
+    const fx = x;
+    const fy = y - 20;
+    ctx.save();
+    ctx.translate(fx, fy);
+    ctx.fillStyle = f === 'it' ? '#7dd3fc' : f === 'hr' ? '#fda4af' : f === 'mgmt' ? '#a5b4fc' : '#94a3b8';
+    ctx.beginPath();
+    ctx.arc(0, 0, 3, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
   }
 }
 
@@ -88,15 +110,62 @@ function drawHUD(state, canvas) {
   ui.hudStress.textContent = String(Math.round(state.player.stress));
   ui.hudJira.textContent = String(state.player.jira);
   ui.hudQuest.textContent = state.quests.currentTitle();
+  // faction bars + dynamic affiliation label
+  const it = Math.max(-100, Math.min(100, state.rep.it||0));
+  const hr = Math.max(-100, Math.min(100, state.rep.hr||0));
+  const mg = Math.max(-100, Math.min(100, state.rep.mgmt||0));
+  if (ui.repIT) ui.repIT.style.width = `${(it+100)/2}%`;
+  if (ui.repHR) ui.repHR.style.width = `${(hr+100)/2}%`;
+  if (ui.repMGMT) ui.repMGMT.style.width = `${(mg+100)/2}%`;
 }
 
 export function drawScene(state, ctx, canvas) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.imageSmoothingEnabled = false;
-  drawGrid(ctx, state.map, state.camera, canvas);
-  drawNPCs(ctx, state.npcs, state.camera);
-  drawPlayer(ctx, state.player, state.camera);
+  const cine = state.cinematic;
+  if (cine?.active) {
+    const zoom = Math.max(1, Math.min(2.2, cine.zoom || 1.6));
+    const focus = cine.focus || { x: state.player.x, y: state.player.y };
+    const tempCam = {
+      x: Math.floor(focus.x * TILE - (canvas.width / zoom) / 2 + 8),
+      y: Math.floor(focus.y * TILE - (canvas.height / zoom) / 2 + 8),
+    };
+    ctx.save();
+    ctx.scale(zoom, zoom);
+    drawGrid(ctx, state.map, tempCam, canvas);
+    drawNPCs(ctx, state.npcs, tempCam);
+    drawPlayer(ctx, state.player, tempCam);
+    ctx.restore();
+    // letterbox bars
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    const barH = Math.round(canvas.height * 0.12);
+    ctx.fillRect(0, 0, canvas.width, barH);
+    ctx.fillRect(0, canvas.height - barH, canvas.width, barH);
+    // subtle vignette
+    const grad = ctx.createRadialGradient(
+      canvas.width / 2,
+      canvas.height / 2,
+      Math.min(canvas.width, canvas.height) * 0.2,
+      canvas.width / 2,
+      canvas.height / 2,
+      Math.max(canvas.width, canvas.height) * 0.65
+    );
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.35)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  } else {
+    drawGrid(ctx, state.map, state.camera, canvas);
+    drawNPCs(ctx, state.npcs, state.camera);
+    drawPlayer(ctx, state.player, state.camera);
+  }
+  // subtle dust particles overlay
+  drawDust(ctx, canvas);
   drawHUD(state, canvas);
+  drawObjectiveArrow(state, ctx, canvas);
+  drawRoomLabel(state, ctx, canvas);
+  drawZoneLabels(state, ctx, canvas);
+  drawInteractiveHints(state, ctx);
 }
 
 let animTime = 0;
@@ -123,6 +192,102 @@ function drawSteam(ctx, cx, cy) {
     const x = cx + Math.sin((off + i * 10) * 0.1) * 1.5;
     ctx.fillStyle = 'rgba(255,255,255,0.35)';
     ctx.fillRect(Math.round(x), Math.round(y), 1, 2);
+  }
+}
+
+function drawDust(ctx, canvas) {
+  const n = 60;
+  ctx.save();
+  ctx.globalAlpha = 0.08;
+  ctx.fillStyle = '#ffffff';
+  const t = performance.now() * 0.001;
+  for (let i = 0; i < n; i++) {
+    const x = (Math.sin(t * 0.13 + i) * 0.5 + 0.5) * canvas.width;
+    const y = (Math.cos(t * 0.17 + i * 1.7) * 0.5 + 0.5) * canvas.height;
+    ctx.fillRect(Math.round(x), Math.round(y), 1, 1);
+  }
+  ctx.restore();
+}
+
+function drawObjectiveArrow(state, ctx, canvas) {
+  const target = state.objective;
+  if (!target || !state.ui.trackerText) return;
+  state.ui.trackerText.textContent = target.label || 'Cel';
+  const px = state.player.x * TILE - state.camera.x;
+  const py = state.player.y * TILE - state.camera.y;
+  const tx = target.x * TILE - state.camera.x;
+  const ty = target.y * TILE - state.camera.y;
+  const dx = tx - px, dy = ty - py;
+  const ang = Math.atan2(dy, dx);
+  const cxm = canvas.width - 24, cym = 24;
+  ctx.save();
+  ctx.translate(cxm, cym);
+  ctx.rotate(ang);
+  ctx.fillStyle = '#7dd3fc';
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-10, 4);
+  ctx.lineTo(-10, -4);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawRoomLabel(state, ctx, canvas) {
+  if (!state.roomName) return;
+  ctx.save();
+  ctx.fillStyle = 'rgba(26,32,51,0.7)';
+  ctx.fillRect(canvas.width - 180, canvas.height - 28, 172, 22);
+  ctx.strokeStyle = '#2a2f36';
+  ctx.strokeRect(canvas.width - 180, canvas.height - 28, 172, 22);
+  ctx.fillStyle = '#d8e1ff';
+  ctx.font = '12px monospace';
+  ctx.fillText(state.roomName, canvas.width - 168, canvas.height - 14);
+  ctx.restore();
+}
+
+function drawZoneLabels(state, ctx, canvas) {
+  const zones = state.map.zones || [];
+  ctx.save();
+  ctx.fillStyle = 'rgba(15,23,42,0.6)';
+  ctx.strokeStyle = '#1f2937';
+  ctx.font = '10px monospace';
+  for (const z of zones) {
+    const x = Math.floor(z.x * TILE - state.camera.x);
+    const y = Math.floor(z.y * TILE - state.camera.y);
+    const w = ctx.measureText(z.label).width + 10;
+    ctx.fillRect(x - w/2, y - 18, w, 14);
+    ctx.strokeRect(x - w/2, y - 18, w, 14);
+    ctx.fillStyle = '#dbeafe';
+    ctx.fillText(z.label, x - w/2 + 5, y - 7);
+    ctx.fillStyle = 'rgba(15,23,42,0.6)';
+  }
+  ctx.restore();
+}
+
+function drawInteractiveHints(state, ctx) {
+  // pulsujący wskaźnik przy ekspresie i lodówce, jeśli cooldown minął
+  const t = (performance.now() * 0.005) % (Math.PI*2);
+  const pulse = (Math.sin(t) * 0.5 + 0.5) * 0.6 + 0.2;
+  const mark = (wx, wy, color) => {
+    const sx = Math.floor(wx * TILE - state.camera.x + 8);
+    const sy = Math.floor(wy * TILE - state.camera.y + 4);
+    ctx.save();
+    ctx.globalAlpha = pulse;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(sx, sy, 5, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  };
+  for (let y=0; y<state.map.height; y++) {
+    for (let x=0; x<state.map.width; x++) {
+      const t = state.map.get(x, y);
+      if (!t || !t.type) continue;
+      if (t.type === 'espresso' || t.type === 'fridge') {
+        mark(x, y, t.type === 'espresso' ? '#f59e0b' : '#93c5fd');
+      }
+    }
   }
 }
 

@@ -12,7 +12,13 @@
       <canvas id="gameCanvas" width="768" height="576"></canvas>
       <div id="overlay" class="hidden"></div>
       <div id="dialog" class="hidden">
-        <div id="dialogName"></div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <canvas id="dialogAvatar" width="128" height="128" style="image-rendering: pixelated; border:1px solid #1f2937; background:#0b1222"></canvas>
+          <div>
+            <div id="dialogName"></div>
+            <div id="dialogSub" class="mono" style="opacity:.8;font-size:12px"></div>
+          </div>
+        </div>
         <div id="dialogText"></div>
         <div id="dialogHint">[E] – kontynuuj • [Esc] – zamknij</div>
       </div>
@@ -21,22 +27,44 @@
         <div class="hud-item">📈 Stres: <span id="hudStress">0</span>/100</div>
         <div class="hud-item">🧩 JIRA: <span id="hudJira">0</span></div>
         <div class="hud-item">🕒 <span id="hudClock">09:00</span></div>
+        <div class="hud-item">🏳️ Frakcja: <span id="hudFaction">—</span></div>
         <div class="hud-item">🎯 Zadanie: <span id="hudQuest">—</span></div>
         <button id="btnMusic" class="btn">🎵 Lo‑fi: ON</button>
+        <button id="btnTimeMode" class="btn">⏱️ 30m</button>
         <button id="btnPopups" class="btn">🔔 Popups: ON</button>
+        <button id="btnTracker" class="btn">📍 Cele</button>
         <button id="btnHelp" class="btn">❓</button>
         <button id="btnLog" class="btn">📓</button>
         <button id="btnBingo" class="btn hidden">🧠 Bingo</button>
+        <button id="btnPhone" class="btn">📱</button>
+        <button id="btnPause" class="btn">⏸️</button>
+      </div>
+      <div id="factions" class="factions">
+        <div class="f-title">Frakcje</div>
+        <div class="f-row"><span class="dot it"></span> IT <div class="bar"><div id="repIT" class="fill it"></div></div></div>
+        <div class="f-row"><span class="dot hr"></span> HR <div class="bar"><div id="repHR" class="fill hr"></div></div></div>
+        <div class="f-row"><span class="dot mgmt"></span> MGMT <div class="bar"><div id="repMGMT" class="fill mgmt"></div></div></div>
       </div>
       <div id="toast" class="toast hidden"></div>
+      <!-- Tracker przeniesiony do modalu, by nie zasłaniał ekranu -->
+      <div id="trackerModal" class="modal hidden">
+        <div class="modal-title">Cele</div>
+        <ul id="trackerList" class="mono" style="max-height:240px;overflow:auto"></ul>
+        <div class="modal-actions">
+          <button id="btnTrackerClose" class="btn">Zamknij</button>
+        </div>
+      </div>
       <div id="helpModal" class="modal hidden">
         <div class="modal-title">Jak grać – CorpoLife RPG</div>
         <div class="modal-body">
           - Ruch: WASD/strzałki • Rozmowa: E • Zamknij: Esc<br/>
           - Muzyka: przycisk 🎵 • Pomoc: ❓ • Dziennik: 📓 • Bingo: 🧠<br/>
-          - Stres spowalnia postać. Kawa i roślina „Stefan” obniżają stres.<br/>
+          - Obiekty interaktywne (E): lodówka/ekspres w kuchni (kawa, cooldown), roślina „Stefan” (–stres, cooldown).<br/>
+          - Stres spowalnia postać i blokuje niektóre opcje dialogowe. Kawa i „Stefan” obniżają stres.<br/>
           - Codzienne eventy: daily o 9:05, randomowe side-questy w ciągu dnia.<br/>
-          - Cel: przetrwać dzień, zdobyć reputację w IT/HR/Management i nie spalić się.
+          - Cel: przetrwać dzień, zdobyć reputację w IT/HR/Management i nie spalić się.<br/>
+          - Tryby czasu (klawisze 1/2/3): 30/60/90 min na przejście (9:00→17:30). Dłuższe tryby pozwalają odkryć więcej ścieżek dialogowych.<br/>
+          - Lista celów: 📍 Cele (HUD) – otwiera podgląd zadań zamiast stałego okienka.
         </div>
         <div class="modal-actions">
           <button id="btnHelpClose" class="btn">OK</button>
@@ -59,10 +87,57 @@
         </div>
       </div>
 
+      <div id="diceModal" class="modal hidden">
+        <div class="modal-title">Rzut kostką</div>
+        <div id="diceBody" class="modal-body mono"></div>
+        <div class="modal-actions">
+          <button id="btnDiceClose" class="btn">OK</button>
+        </div>
+      </div>
+
       <div id="choiceModal" class="modal hidden">
         <div id="choiceTitle" class="modal-title">Wybór</div>
         <div id="choiceBody" class="modal-body"></div>
         <div id="choiceList" class="choices"></div>
+      </div>
+
+      <div id="phoneModal" class="modal hidden">
+        <div class="modal-title">Smartfon</div>
+        <div class="modal-body">
+          <div><b>Wiadomości</b></div>
+          <div id="inboxList" class="mono" style="max-height:160px;overflow:auto"></div>
+          <div style="margin-top:8px"><b>Ekwipunek</b></div>
+          <div id="invList" class="mono"></div>
+        </div>
+        <div class="modal-actions">
+          <button id="btnPhoneClose" class="btn">Zamknij</button>
+        </div>
+      </div>
+
+      <div id="pauseModal" class="modal hidden">
+        <div class="modal-title">Pauza</div>
+        <div class="modal-body">
+          Gra zapisuje się automatycznie w pauzie. Możesz kontynuować lub rozpocząć nową grę.
+        </div>
+        <div class="modal-actions">
+          <button id="btnContinue" class="btn">Kontynuuj</button>
+          <button id="btnNewGame" class="btn">Nowa gra</button>
+        </div>
+      </div>
+
+      <div id="skillsModal" class="modal hidden">
+        <div class="modal-title">Wybierz 2 talenty startowe</div>
+        <div class="modal-body">Każdy talent daje +2 do testów. Nazwy są satyryczne, ale mechanika poważna.</div>
+        <div class="skills-grid">
+          <button class="btn skill" data-skill="emp">💛 Serducho HR-u (+2 Empatia)</button>
+          <button class="btn skill" data-skill="log">🔧 Kult Stacktrace'a (+2 Logika)</button>
+          <button class="btn skill" data-skill="ret">📊 PowerPoint Ninja (+2 Retoryka)</button>
+          <button class="btn skill" data-skill="grit">🏋️ Sprintowy Czołg (+2 Grit)</button>
+        </div>
+        <div class="modal-actions">
+          <span id="skillsCounter" class="mono">Wybrane: 0/2</span>
+          <button id="skillsConfirm" class="btn" disabled>Start</button>
+        </div>
       </div>
     </div>
     <script type="module" src="./src/main.js"></script>
