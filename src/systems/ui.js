@@ -5,6 +5,8 @@ export function openDialog(state, name, text, sub = '') {
   dialog.classList.remove('hidden');
   dialogName.textContent = name;
   dialogText.textContent = text;
+  const closeBtn = document.getElementById('dialogClose');
+  if (closeBtn) closeBtn.onclick = () => closeDialog(state);
   const subEl = document.getElementById('dialogSub');
   if (subEl) subEl.textContent = sub || '';
   // draw avatar if present in npcMeta

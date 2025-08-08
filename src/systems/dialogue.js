@@ -58,7 +58,7 @@ export function createDialogue(state) {
         }
       });
     } else {
-      // Linear line, wait for E
+      // Linear line, wait for E or tap on dialog/A button
       if (node.speaker || node.text) {
         const sub = subForSpeaker(state, node.speaker);
         openDialog(state, node.speaker || 'Narrator', node.text || '', sub);

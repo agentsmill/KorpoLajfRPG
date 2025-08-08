@@ -63,6 +63,7 @@ canvas#gameCanvas {
   box-shadow: 0 8px 30px rgba(0,0,0,.4);
   z-index: 30;
 }
+#dialog .dialog-close { position:absolute; right:8px; top:8px; background:transparent; border:none; color:#cbd5e1; font-size:20px; line-height:1; cursor:pointer; }
 #dialog { animation: fadeIn .18s ease-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(6px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 

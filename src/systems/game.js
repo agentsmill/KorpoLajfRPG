@@ -273,8 +273,8 @@ export function createGame({ canvas, ctx, ui }) {
         const worldY = (cy * (canvas.height/rect.height) / scale + state.camera.y) / 16;
         tapTarget = { x: worldX, y: worldY };
       }
-      canvas.addEventListener('touchstart', (e)=>{ if (e.target.closest('.modal')) return; setTapTarget(e); }, {passive:false});
-      canvas.addEventListener('mousedown', (e)=>{ if (e.target.closest('.modal')) return; setTapTarget(e); });
+      canvas.addEventListener('touchstart', (e)=>{ if (document.querySelector('.modal:not(.hidden)')) return; setTapTarget(e); }, {passive:false});
+      canvas.addEventListener('mousedown', (e)=>{ if (document.querySelector('.modal:not(.hidden)')) return; setTapTarget(e); });
 
       requestAnimationFrame(loop);
       // integrate tapTarget into movement
