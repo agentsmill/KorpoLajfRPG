@@ -141,6 +141,22 @@ export function createGame({ canvas, ctx, ui }) {
         state._popupsOn = !state._popupsOn;
         ui.btnPopups.textContent = state._popupsOn ? '🔔 Popups: ON' : '🔕 Popups: OFF';
       });
+      // Theme toggle (noir <-> pastel)
+      ui.btnTheme?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const noir = getComputedStyle(root).getPropertyValue('--bg').trim() === '#0b0f1a';
+        if (noir) {
+          root.style.setProperty('--bg', '#0f1220');
+          root.style.setProperty('--hud', '#0f1a2a');
+          root.style.setProperty('--accent', '#fbcfe8');
+          root.style.setProperty('--accent2', '#a7f3d0');
+        } else {
+          root.style.setProperty('--bg', '#0b0f1a');
+          root.style.setProperty('--hud', '#111728');
+          root.style.setProperty('--accent', '#a5b4fc');
+          root.style.setProperty('--accent2', '#7dd3fc');
+        }
+      });
 
       setupSkillsSelection();
       setupTimeModes();
@@ -205,6 +221,11 @@ export function createGame({ canvas, ctx, ui }) {
       state.keys.delete('e');
       state._interactRequested = false;
       if (state.story.consumeInteraction()) return;
+      // If dialogue is already active, advance it instead of starting a new one
+      if (state.dialogue?.isActive && state.dialogue.isActive()) {
+        state.dialogue.consumeInteraction();
+        return;
+      }
       // interaktywne obiekty (kuchnia/roślina)
       if (tryUseInteractive()) return;
       const target = state.npcs.find(n => Math.hypot(n.x - state.player.x, n.y - state.player.y) < 1.6);

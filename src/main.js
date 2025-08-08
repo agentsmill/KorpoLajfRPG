@@ -18,6 +18,7 @@ const ui = {
   btnTimeMode: document.getElementById('btnTimeMode'),
   btnPopups: document.getElementById('btnPopups'),
   btnHelp: document.getElementById('btnHelp'),
+  btnTheme: document.getElementById('btnTheme'),
   btnHelpClose: document.getElementById('btnHelpClose'),
   helpModal: document.getElementById('helpModal'),
   btnFinish: document.getElementById('btnFinish'),
