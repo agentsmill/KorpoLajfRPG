@@ -73,10 +73,24 @@ function resizeCanvas() {
   const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
   const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
   const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-  // canvas aspect 4:3, fill width, keep within height minus HUD and controls
-  let cssW = vw;
-  let cssH = Math.round(cssW * 0.75);
-  if (cssH > vh * 0.72) { cssH = Math.round(vh * 0.72); cssW = Math.round(cssH * (4/3)); }
+  // Reserve space for HUD (top) and on-screen controls (bottom) on mobile
+  const hud = document.getElementById('hud');
+  const dpad = document.getElementById('dpad');
+  const act = document.getElementById('actionConfirm');
+  const hudH = hud ? Math.ceil(hud.getBoundingClientRect().height) + 12 : 0;
+  const bottomH = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches)
+    ? Math.max(
+        dpad ? Math.ceil(dpad.getBoundingClientRect().height) : 0,
+        act ? Math.ceil(act.getBoundingClientRect().height) : 0
+      ) + 24
+    : 0;
+  const availH = Math.max(200, vh - hudH - bottomH);
+  // canvas aspect 4:3, maximize within width and available height
+  let cssW = Math.min(vw, Math.round(availH * (4/3)));
+  let cssH = Math.min(availH, Math.round(vw * 0.75));
+  // maintain exact 4:3
+  if (cssW / cssH > 4/3) cssW = Math.round(cssH * (4/3));
+  else cssH = Math.round(cssW * 3/4);
   canvas.style.width = cssW + 'px';
   canvas.style.height = cssH + 'px';
   const needW = Math.round(cssW * dpr);
