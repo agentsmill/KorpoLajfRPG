@@ -176,6 +176,12 @@ export function createGame({ canvas, ctx, ui }) {
       else { /* close enough: clear target */ state._getTapTarget = ()=>null; }
     }
 
+    // Auto-interact when we approached position tapped on
+    if (state._tapInteract) {
+      const d2 = Math.hypot(state._tapInteract.x - state.player.x, state._tapInteract.y - state.player.y);
+      if (d2 < 1.2) { state._interactRequested = true; state._tapInteract = null; }
+    }
+
     // normalize
     if (move.x !== 0 && move.y !== 0) { move.x *= 0.7071; move.y *= 0.7071; }
 
@@ -277,6 +283,14 @@ export function createGame({ canvas, ctx, ui }) {
         const worldX = (cx * (canvas.width/rect.width) / scale + state.camera.x) / 16;
         const worldY = (cy * (canvas.height/rect.height) / scale + state.camera.y) / 16;
         tapTarget = { x: worldX, y: worldY };
+        // prepare auto-interact when target is NPC or interactive tile
+        const nearNpc = state.npcs.find(n => Math.hypot(n.x - worldX, n.y - worldY) < 0.9);
+        if (nearNpc) state._tapInteract = { x: nearNpc.x, y: nearNpc.y };
+        else {
+          const tx = Math.round(worldX), ty = Math.round(worldY);
+          const tt = state.map.get(tx, ty);
+          if (tt && (tt.type==='espresso'||tt.type==='fridge'||tt.type==='plant'||tt.type==='printer')) state._tapInteract = { x: tx, y: ty };
+        }
       }
       canvas.addEventListener('touchstart', (e)=>{ if (document.querySelector('.modal:not(.hidden)')) return; setTapTarget(e); }, {passive:false});
       canvas.addEventListener('mousedown', (e)=>{ if (document.querySelector('.modal:not(.hidden)')) return; setTapTarget(e); });
