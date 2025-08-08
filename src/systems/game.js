@@ -116,6 +116,9 @@ export function createGame({ canvas, ctx, ui }) {
       // Phone
       ui.btnPhone?.addEventListener('click', () => { updatePhoneUI(); ui.phoneModal?.classList.remove('hidden'); ui.overlay?.classList.remove('hidden'); });
       ui.btnPhoneClose?.addEventListener('click', () => { ui.phoneModal?.classList.add('hidden'); ui.overlay?.classList.add('hidden'); });
+      // Factions modal
+      ui.btnFactions?.addEventListener('click', () => { ui.overlay?.classList.remove('hidden'); ui.factionsModal?.classList.remove('hidden'); });
+      ui.btnFactionsClose?.addEventListener('click', () => { ui.factionsModal?.classList.add('hidden'); ui.overlay?.classList.add('hidden'); });
       // Pause + autosave
       ui.btnPause?.addEventListener('click', () => { doPause(); });
       ui.btnContinue?.addEventListener('click', () => { doResume(); });

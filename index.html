@@ -34,6 +34,7 @@
         <button id="btnTimeMode" class="btn">⏱️ 30m</button>
         <button id="btnPopups" class="btn">🔔 Popups: ON</button>
         <button id="btnFinish" class="btn">🏁</button>
+        <button id="btnFactions" class="btn">🏳️ Frakcje</button>
         <button id="btnTracker" class="btn">📍 Cele</button>
         <button id="btnHelp" class="btn">❓</button>
         <button id="btnLog" class="btn">📓</button>
@@ -41,11 +42,17 @@
         <button id="btnPhone" class="btn">📱</button>
         <button id="btnPause" class="btn">⏸️</button>
       </div>
-      <div id="factions" class="factions">
-        <div class="f-title">Frakcje</div>
-        <div class="f-row"><span class="dot it"></span> IT <div class="bar"><div id="repIT" class="fill it"></div></div></div>
-        <div class="f-row"><span class="dot hr"></span> HR <div class="bar"><div id="repHR" class="fill hr"></div></div></div>
-        <div class="f-row"><span class="dot mgmt"></span> MGMT <div class="bar"><div id="repMGMT" class="fill mgmt"></div></div></div>
+      <!-- Factions moved to modal -->
+      <div id="factionsModal" class="modal hidden">
+        <div class="modal-title">Frakcje i Reputacja</div>
+        <div class="modal-body">
+          <div class="f-row"><span class="dot it"></span> IT <div class="bar"><div id="repIT" class="fill it"></div></div></div>
+          <div class="f-row"><span class="dot hr"></span> HR <div class="bar"><div id="repHR" class="fill hr"></div></div></div>
+          <div class="f-row"><span class="dot mgmt"></span> MGMT <div class="bar"><div id="repMGMT" class="fill mgmt"></div></div></div>
+        </div>
+        <div class="modal-actions">
+          <button id="btnFactionsClose" class="btn">Zamknij</button>
+        </div>
       </div>
       <div id="toast" class="toast hidden"></div>
       <!-- Tracker przeniesiony do modalu, by nie zasłaniał ekranu -->

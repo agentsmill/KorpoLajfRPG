@@ -65,6 +65,14 @@ export const DIALOG_TREES = {
       manual_bad: { speaker:'Janusz', text:'Dłoń ci drży. To normalne.', effects:{ stress:10 }, next:'end' },
       // Gate to server room
       gate1: { speaker: 'Janusz', text: 'Masz repkę, masz klucz. Ale wiedz, że to droga bez powrotu.', effects:{ unlockFaction:'admin', setFlag:{ admin_unlocked:true }, objective:{ id:'enter_srv', label:'Wejdź do serwerowni', x:42, y:28 } }, next: 'end' },
+      // Akt II – po zebraniu jednego filaru raportu
+      act2_gate: { speaker:'Janusz', text:'Masz już jedną prawdę. Zobaczmy czy uniesiesz dwie.', requiresFlags:{ case_it:true }, next:'act2_fork' },
+      act2_fork: { title:'Głębiej', text:'Co dalej?', choices:[
+        { id:'debt', label:'Dług techniczny jako ludzka historia', next:'a2_1' },
+        { id:'ops', label:'Operacje uczą pokory', next:'a2_2' },
+      ]},
+      a2_1:{ speaker:'Janusz', text:'Dług to nie liczby. To bezsenne noce.', effects:{ setFlag:{ case_it:true }, jira:1 }, next:'end' },
+      a2_2:{ speaker:'Janusz', text:'Zadzwoń do DevOps. Jak mówią o ryzyku – słuchaj.', effects:{ setFlag:{ case_ops_risk:true } }, next:'end' },
       end: { speaker: 'Janusz', text: 'Wracaj, jak będziesz gotów na „legacy-monolita”.' }
     }
   },
@@ -250,6 +258,14 @@ export const DIALOG_TREES = {
       hr_bs2:{ speaker:'HR Ania', text:'Chcę, by procedury ratowały ludzi, nie tabelki.', check:{ skill:'Empatia', dc:12, success:'hr_bs_ok', failure:'hr_bs_fail' } },
       hr_bs_ok:{ speaker:'HR Ania', text:'Weź tę historię. To twoja karta „serce”.', effects:{ setFlag:{ hr_story:true, case_hr:true }, addObjective:{ id:'board_hr_story', label:'Dowód: historia HR (na zarząd)', x:48, y:30 } }, next:'end' },
       hr_bs_fail:{ speaker:'HR Ania', text:'Rozumiem, że dziś trudno. Wróć, jak będziesz gotów.', effects:{ stress:3 }, next:'end' },
+      // Akt II – po zebraniu jednego filaru
+      act2_gate:{ speaker:'HR Ania', text:'Masz już punkt widzenia. Dodaj do niego człowieka.', requiresFlags:{ case_hr:true }, next:'act2_fork' },
+      act2_fork:{ title:'Empatia 2', text:'Jak pomóc?', choices:[
+        { id:'story', label:'Case: rodzina vs. nadgodziny', next:'a2_1' },
+        { id:'scope', label:'Case: tniemy zakres, nie ludzi', next:'a2_2' },
+      ]},
+      a2_1:{ speaker:'HR Ania', text:'Zapisz to. To jest „człowiek” do raportu.', effects:{ setFlag:{ case_hr:true }, jira:1 }, next:'end' },
+      a2_2:{ speaker:'HR Ania', text:'Zespół oddycha. To też prawda.', effects:{ rep:{ mgmt:4 } }, next:'end' },
       end: { speaker: 'HR Ania', text: 'Gdy będzie ciężko – przyjdź.' }
     }
   },
@@ -275,6 +291,12 @@ export const DIALOG_TREES = {
       m_bs2:{ speaker:'PM', text:'Od tego czasu wierzę w mur, który chroni zespół.', check:{ skill:'Grit', dc:12, success:'m_bs_ok', failure:'m_bs_fail' } },
       m_bs_ok:{ speaker:'PM', text:'Weź „cięcie zakresu, nie ludzi” na zarząd.', effects:{ setFlag:{ mgmt_scope:true, case_ops_risk:true }, addObjective:{ id:'board_scope_case', label:'Dowód: cięcie zakresu (na zarząd)', x:48, y:30 } }, next:'end' },
       m_bs_fail:{ speaker:'PM', text:'Mur buduje się cegłami. Dziś wziąłeś jedną.', effects:{ stress:3 }, next:'end' },
+      // Akt II – po zebraniu jednego filaru
+      act2_gate:{ speaker:'PM', text:'Masz już kierunek. Zrób z tego decyzję.', next:'act2_fork' },
+      act2_fork:{ title:'Decyzja II', text:'Co forsujesz?', choices:[
+        { id:'scope', label:'Tnij zakres – ludzi oszczędź', effects:{ setFlag:{ end_scope:true }, rep:{ mgmt:6 } }, next:'end' },
+        { id:'truth', label:'Powiedz prawdę, nie PR', effects:{ setFlag:{ end_truth:true }, rep:{ mgmt:3 } }, next:'end' },
+      ]},
       end: { speaker: 'PM', text: 'Wracaj z planem lub pytaniami.' }
     }
   },
