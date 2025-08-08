@@ -79,7 +79,10 @@ function resizeCanvas() {
   const act = document.getElementById('actionConfirm');
   const hudH = hud ? Math.ceil(hud.getBoundingClientRect().height) + 12 : 0;
   const bottomH = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches)
-    ? (act ? Math.ceil(act.getBoundingClientRect().height) + 20 : 24)
+    ? Math.max(
+        dpad ? Math.ceil(dpad.getBoundingClientRect().height) + 16 : 0,
+        act ? Math.ceil(act.getBoundingClientRect().height) + 16 : 0
+      )
     : 0;
   const availH = Math.max(200, vh - hudH - bottomH);
   // canvas aspect 4:3, maximize within width and available height

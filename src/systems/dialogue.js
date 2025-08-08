@@ -67,12 +67,10 @@ export function createDialogue(state) {
       if (node.speaker || node.text) {
         const sub = subForSpeaker(state, node.speaker);
         openDialog(state, node.speaker || 'Narrator', node.text || '', sub);
+        // przygotuj plan następnego kroku aby tap działał od razu
+        active.nextPlanned = node.next || null;
       }
-      if (node.next) {
-        active.nextPlanned = node.next;
-      } else {
-        active.nextPlanned = null;
-      }
+      else { active.nextPlanned = null; }
     }
   }
 
