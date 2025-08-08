@@ -22,6 +22,8 @@ canvas#gameCanvas {
   background: linear-gradient(180deg, #0b1222 0%, #090e1b 100%);
   box-shadow: 0 12px 40px rgba(0,0,0,.5);
   position: relative;
+  display: block;
+  margin: 0 auto;
 }
 
 #hud { position:fixed; left:8px; top:8px; right:8px; display:flex; flex-wrap:wrap; gap:8px; background:rgba(26,32,51,.75); padding:8px 10px; border-radius:10px; border:1px solid #2a2f36; backdrop-filter: blur(2px); z-index:6; }
@@ -53,8 +55,8 @@ canvas#gameCanvas {
 #dialog {
   position: fixed;
   left: 50%;
-  bottom: calc(env(safe-area-inset-bottom) + 16px);
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: min(720px, 96vw);
   background: linear-gradient(180deg, #0e1426, #0b1120);
   border: 2px solid #1f2937;
@@ -200,8 +202,8 @@ canvas#gameCanvas {
 
 /* Touch-first tweaks */
 @media (pointer: coarse) {
-  /* Place dialog higher and centered to keep bottom controls free */
-  #dialog { top: 52%; bottom: auto; transform: translate(-50%, -50%); }
+  /* Place dialog slightly higher to keep bottom controls free */
+  #dialog { top: 52%; transform: translate(-50%, -50%); }
 }
 
 /* D-pad narrow strip at bottom */

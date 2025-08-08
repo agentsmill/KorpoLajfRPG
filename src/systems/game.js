@@ -102,6 +102,10 @@ export function createGame({ canvas, ctx, ui }) {
         if (e.key.toLowerCase() === 'f3') state._secret?.llm3?.();
       });
       window.addEventListener('keyup', (e) => state.keys.delete(e.key.toLowerCase()));
+      // WASD aliases
+      const keyMap = { w:'arrowup', s:'arrowdown', a:'arrowleft', d:'arrowright' };
+      window.addEventListener('keydown', (e)=>{ const m=keyMap[e.key.toLowerCase()]; if(m){e.preventDefault(); state.keys.add(m);} });
+      window.addEventListener('keyup', (e)=>{ const m=keyMap[e.key.toLowerCase()]; if(m){ state.keys.delete(m);} });
       // assign sprites
       state.player.sprite = state.sprites.makeSprite('#06d6a0');
       for (const n of state.npcs) n.sprite = state.sprites.makeSprite(n.color, `${n.id}::${n.faction||'neutral'}`);
