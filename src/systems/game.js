@@ -120,8 +120,7 @@ export function createGame({ canvas, ctx, ui }) {
       ui.btnTrackerClose?.addEventListener('click', () => { ui.trackerModal?.classList.add('hidden'); ui.overlay?.classList.add('hidden'); });
       ui.btnLog?.addEventListener('click', () => { updateLogUI(); ui.logModal.classList.remove('hidden'); });
       ui.btnLogClose?.addEventListener('click', () => ui.logModal.classList.add('hidden'));
-      ui.btnBingo?.addEventListener('click', openBingo);
-      ui.btnBingoClose?.addEventListener('click', () => ui.bingoModal.classList.add('hidden'));
+      // Bingo removed from HUD (feature disabled on web)
       // Finish now (go to CEO)
       ui.btnFinish?.addEventListener('click', () => goToCEO());
       // Phone
@@ -181,13 +180,13 @@ export function createGame({ canvas, ctx, ui }) {
     }
 
     // tap-to-move steering if present
-    const t = state._getTapTarget ? state._getTapTarget() : null;
+    const t = state.tapTarget || null;
     if (t) {
       const dx = t.x - state.player.x;
       const dy = t.y - state.player.y;
       const dist = Math.hypot(dx,dy);
       if (dist > 0.15) { move.x += dx/dist; move.y += dy/dist; }
-      else { /* close enough: clear target */ state._getTapTarget = ()=>null; }
+      else { /* close enough: clear target */ state.tapTarget = null; }
     }
 
     // Auto-interact when we approached position tapped on
@@ -292,8 +291,8 @@ export function createGame({ canvas, ctx, ui }) {
     init().then(() => {
       state.running = true;
       state.lastTime = performance.now();
-      // Tap-to-move: click/touch on canvas sets a target; player podąża
-      let tapTarget = null;
+      // Tap-to-move: click/touch on canvas sets a target stored on state
+      state.tapTarget = null;
       function setTapTarget(e){
         const rect = canvas.getBoundingClientRect();
         const cx = (e.touches?e.touches[0].clientX:e.clientX) - rect.left;
@@ -301,7 +300,7 @@ export function createGame({ canvas, ctx, ui }) {
         const scale = Math.max(1, state.zoom||1);
         const worldX = (cx * (canvas.width/rect.width) / scale + state.camera.x) / 16;
         const worldY = (cy * (canvas.height/rect.height) / scale + state.camera.y) / 16;
-        tapTarget = { x: worldX, y: worldY };
+        state.tapTarget = { x: worldX, y: worldY };
         // prepare auto-interact when target is NPC or interactive tile
         const nearNpc = state.npcs.find(n => Math.hypot(n.x - worldX, n.y - worldY) < 0.9);
         if (nearNpc) state._tapInteract = { x: nearNpc.x, y: nearNpc.y };
@@ -312,11 +311,10 @@ export function createGame({ canvas, ctx, ui }) {
         }
       }
       canvas.addEventListener('touchstart', (e)=>{ if (document.querySelector('.modal:not(.hidden)')) return; setTapTarget(e); }, {passive:false});
-      canvas.addEventListener('mousedown', (e)=>{ if (document.querySelector('.modal:not(.hidden)')) return; setTapTarget(e); });
+      canvas.addEventListener('mousedown', (e)=>{ if (document.querySelector('.modal:not(.hidden)')) return; e.preventDefault(); setTapTarget(e); });
 
       requestAnimationFrame(loop);
-      // integrate tapTarget into movement
-      state._getTapTarget = ()=>tapTarget;
+      // no-op here; state.tapTarget is read in update()
     });
   }
 
