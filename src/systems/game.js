@@ -175,7 +175,7 @@ export function createGame({ canvas, ctx, ui }) {
       if (target) {
           state._currentNpcId = target.id;
         // route to dialogue trees by NPC id
-        if (['janusz','hr','scrum','ceo','admin','pm','ux','qa','fin','ops','sec','sec2'].includes(target.id)) {
+        if (['janusz','hr','scrum','ceo','admin','pm','ux','qa','fin','ops','sec','sec2','mkt1','mkt2','law1','law2','rnd1','rnd2','diz1','acc1','lou1','ter1','ops2','sec3','ds1','pr1','it2','hr2','fac1','mkt3','rnd3','vip1'].includes(target.id)) {
           const treeId = (target.id === 'scrum' || target.id === 'pm') ? 'mgmt' : target.id;
           state.dialogue.start(treeId, 'start');
         } else {

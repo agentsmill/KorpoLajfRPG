@@ -332,6 +332,50 @@ export const DIALOG_TREES = {
       end: { speaker: 'Narrator', text: 'Koniec dnia. Zostaje człowiek.' }
     }
   },
+  // Lightweight dialog hooks for new NPCs (mini-wątki i powiązania z raportem)
+  mkt1: { nodes:{
+    start:{ speaker:'Marketing Kasia', text:'Masz historię. Ja mam narrację. Chcesz pomocy?', next:'c1' },
+    c1:{ title:'Narracja', text:'Co ubrać w słowa?', choices:[
+      { id:'hr', label:'Człowiek – case HR (Empatia)', check:{ skill:'Empatia', dc:11, success:'ok', failure:'bad' } },
+      { id:'mix', label:'Most: liczby+człowiek (Retoryka)', check:{ skill:'Retoryka', dc:12, success:'ok', failure:'bad' } },
+    ]},
+    ok:{ speaker:'Marketing Kasia', text:'Masz to. Twoje „Dane” będą mówić.', effects:{ rep:{ mgmt:4 }, jira:1 }, next:'end' },
+    bad:{ speaker:'Marketing Kasia', text:'Za dużo żargonu. Odetchnij i wróć.', effects:{ stress:3 }, next:'end' },
+    end:{ speaker:'Marketing Kasia', text:'Powiedz prawdę – ja ją podkreślę.' }
+  }},
+  law1: { nodes:{
+    start:{ speaker:'Legal Marta', text:'Raport musi być etyczny. I legalny.', next:'c1' },
+    c1:{ title:'Legal', text:'Dodać klauzulę?', choices:[
+      { id:'yes', label:'Tak – chronimy ludzi', next:'ok' },
+      { id:'no', label:'Nie – ryzykujmy', next:'bad' },
+    ]},
+    ok:{ speaker:'Legal Marta', text:'Dobrze. Chronisz nie tylko siebie.', effects:{ rep:{ mgmt:4 }, setFlag:{ case_ops_risk:true } }, next:'end' },
+    bad:{ speaker:'Legal Marta', text:'Odważnie. Czasem za odważnie.', effects:{ stress:4 }, next:'end' },
+    end:{ speaker:'Legal Marta', text:'Pamiętaj: prawda bez kontekstu potrafi ranić.' }
+  }},
+  rnd1: { nodes:{
+    start:{ speaker:'R&D Antek', text:'Mam pseudodane syntetyczne do testów.', next:'c1' },
+    c1:{ title:'Dane', text:'Wykorzystać je?', choices:[
+      { id:'use', label:'Tak – pokaż trend', next:'ok' },
+      { id:'skip', label:'Nie – tylko produkcja', next:'end' }
+    ]},
+    ok:{ speaker:'R&D Antek', text:'Masz +1 Dane. Nie oszukują – uczą.', effects:{ jira:1 }, next:'end' },
+    end:{ speaker:'R&D Antek', text:'Wracaj, gdy będziesz chciał pobawić się hipotezami.' }
+  }},
+  ds1: { nodes:{
+    start:{ speaker:'Data Science Magda', text:'Masz historię, ja mam wykres.', next:'c1' },
+    c1:{ title:'Wykres', text:'Jaki? ', choices:[
+      { id:'line', label:'Linia – trajektoria ludzi', next:'ok' },
+      { id:'bar', label:'Słupki – prosta prawda', next:'ok' }
+    ]},
+    ok:{ speaker:'Data Science Magda', text:'Niech liczby będą empatyczne.', effects:{ rep:{ it:3 }, jira:1 }, next:'end' },
+    end:{ speaker:'Data Science Magda', text:'Nie zabijaj historii wykresem.' }
+  }},
+  lou1: { nodes:{
+    start:{ speaker:'Barista Leon', text:'Flat white do raportu?', next:'ok' },
+    ok:{ speaker:'Barista Leon', text:'Masz spokój w kubku.', effects:{ stress:-6 }, next:'end' },
+    end:{ speaker:'Barista Leon', text:'Oddychaj.' }
+  }},
 };
 
 
