@@ -63,8 +63,9 @@ export function createGame({ canvas, ctx, ui }) {
       // prefer bigger zoom on touch devices for readability
       try {
         const isTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-        state.zoom = isTouch ? 1.8 : 1.0;
-      } catch (e) { state.zoom = 1.0; }
+        const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        if (isTouch) state.zoom = 1.8; else state.zoom = vw > 1400 ? 1.4 : 1.2;
+      } catch (e) { state.zoom = 1.2; }
       state.objective = { id: 'report', label: 'Przygotuj raport na 17:30: człowiek/liczba/ryzyko', x: 49, y: 29 };
       state.objectives = [ state.objective ];
       // Hard objective: board meeting at 17:30 (always visible w trackerze)
@@ -233,7 +234,12 @@ export function createGame({ canvas, ctx, ui }) {
       // interaktywne obiekty (kuchnia/roślina)
       if (tryUseInteractive()) return;
       // szerszy zasięg rozmowy i łagodny snap w kierunku celu
-      const target = state.npcs.find(n => Math.hypot(n.x - state.player.x, n.y - state.player.y) < 2.0);
+      // prefer the nearest NPC to avoid misses w tłumie
+      const near = state.npcs
+        .map(n => ({ n, d: Math.hypot(n.x - state.player.x, n.y - state.player.y) }))
+        .filter(o => o.d < 2.2)
+        .sort((a,b)=>a.d-b.d)[0];
+      const target = near?.n;
       if (target) {
           state._currentNpcId = target.id;
         // route to dialogue trees by NPC id
@@ -416,6 +422,9 @@ export function createGame({ canvas, ctx, ui }) {
     if (!ui.inboxList || !ui.invList) return;
     ui.inboxList.innerHTML = (state.inbox||[]).map(m => `<div>[${new Date(m.at).toLocaleTimeString()}] <b>${escapeHtml(m.from)}</b>: ${escapeHtml(m.text)}</div>`).join('') || '<i>Brak wiadomości</i>';
     const invHtml = (state.inventory||[]).map(i => `<div>• ${escapeHtml(i)}</div>`).join('') || '<i>Pusto</i>';
+    // dynamicny skrót zadań i celów
+    const objectives = (state.objectives||[]).slice(0,5).map(o=>`<li>${escapeHtml(o.label||'Cel')}</li>`).join('');
+    const questSummary = `<div style="margin-top:8px"><b>Najbliższe cele</b><ul class="mono">${objectives||'<li>Brak</li>'}</ul></div>`;
     const flags = state.flags || {};
     const pillars = [
       { k:'case_hr', label:'Człowiek' },
@@ -424,7 +433,7 @@ export function createGame({ canvas, ctx, ui }) {
     ];
     const prog = pillars.map(p=>`<span>${p.label}: ${flags[p.k]? '✓':'—'}</span>`).join(' • ');
     const report = `<div style="margin-top:10px"><b>Raport 17:30</b><div>📊 Dane: ${state.player.jira||0}</div><div>${prog}</div></div>`;
-    ui.invList.innerHTML = invHtml + report;
+    ui.invList.innerHTML = invHtml + report + questSummary;
   }
   state._updatePhoneUI = updatePhoneUI;
 
