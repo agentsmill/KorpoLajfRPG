@@ -45,6 +45,7 @@ canvas#gameCanvas {
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,.6);
+  z-index: 8;
 }
 
 #dialog {
@@ -102,16 +103,17 @@ canvas#gameCanvas {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: min(680px, 96vw);
+  width: min(720px, 96vw);
+  max-height: 86vh;
   background: var(--hud);
   border: 2px solid #2a2f36;
   border-radius: 10px;
   padding: 12px 14px;
-  box-shadow: 0 10px 40px rgba(0,0,0,.5);
-  z-index: 5;
+  box-shadow: 0 14px 60px rgba(0,0,0,.6);
+  z-index: 10;
 }
 .modal-title { font-weight: 800; margin-bottom: 8px; color: var(--accent); }
-.modal-body { color: var(--fg); line-height: 1.6; }
+.modal-body { color: var(--fg); line-height: 1.6; max-height: 62vh; overflow-y: auto; }
 .modal-actions { margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px; }
 .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
@@ -173,7 +175,7 @@ canvas#gameCanvas {
   canvas#gameCanvas { width: 100vw; height: auto; }
   .factions { position: static; width: calc(100% - 16px); margin: 8px; }
   #hud { position: fixed; left: 8px; right:8px; bottom: 8px; top: auto; border-radius: 12px; padding: 10px; gap: 8px; justify-content: space-between; }
-  #dialog { width: 96%; bottom: 120px; z-index:7; }
+  #dialog { width: 96%; bottom: 120px; z-index:9; }
 }
 
 /* Mobile joystick */

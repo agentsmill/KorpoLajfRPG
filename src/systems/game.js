@@ -105,7 +105,7 @@ export function createGame({ canvas, ctx, ui }) {
       ui.btnHelp?.addEventListener('click', () => ui.helpModal.classList.remove('hidden'));
       ui.btnHelpClose?.addEventListener('click', () => ui.helpModal.classList.add('hidden'));
       // Tracker modal
-      ui.btnTracker?.addEventListener('click', () => { updateTracker(); ui.trackerModal?.classList.remove('hidden'); ui.overlay?.classList.remove('hidden'); });
+      ui.btnTracker?.addEventListener('click', () => { updateTracker(); ui.overlay?.classList.remove('hidden'); ui.trackerModal?.classList.remove('hidden'); });
       ui.btnTrackerClose?.addEventListener('click', () => { ui.trackerModal?.classList.add('hidden'); ui.overlay?.classList.add('hidden'); });
       ui.btnLog?.addEventListener('click', () => { updateLogUI(); ui.logModal.classList.remove('hidden'); });
       ui.btnLogClose?.addEventListener('click', () => ui.logModal.classList.add('hidden'));
