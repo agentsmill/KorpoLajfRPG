@@ -212,6 +212,24 @@ export const DIALOG_TREES = {
       end: { speaker: 'Ochrona Marek', text: 'Nie giniesz – ja mam mniej papierologii.' }
     }
   },
+  // Generic lightweight trees for characters, gdyby główne nie były gotowe
+  mkt2: { nodes: { start:{ speaker:'Brand Piotr', text:'Logo nie uratuje złej historii.', next:'end' }, end:{ speaker:'Brand Piotr', text:'Ale dobra historia – tak.' } } },
+  law2: { nodes: { start:{ speaker:'Legal Tomek', text:'Regulamin ma chronić, nie nudzić.', next:'end' }, end:{ speaker:'Legal Tomek', text:'Krótko i jasno. Jak trzeba – pomogę.' } } },
+  rnd2: { nodes: { start:{ speaker:'R&D Sara', text:'Hipotezy są jak kawy – testujemy i wybieramy najlepszą.', next:'end' }, end:{ speaker:'R&D Sara', text:'Przynieś dane, dam ci wnioski.' } } },
+  diz1: { nodes: { start:{ speaker:'Designer Kuba', text:'Siatka 8‑pt to nie religia, to spokój.', next:'end' }, end:{ speaker:'Designer Kuba', text:'Wracaj z feedbackiem.' } } },
+  acc1: { nodes: { start:{ speaker:'Księgowość Basia', text:'Cyferki też mają uczucia.', next:'end' }, end:{ speaker:'Księgowość Basia', text:'Nie krzywdź ich bez sensu.' } } },
+  lou1: { nodes: { start:{ speaker:'Barista Leon', text:'Espresso?', choices:[{id:'ok',label:'Poproszę', effects:{stress:-4}}, {id:'no',label:'Później'}] } } },
+  ter1: { nodes: { start:{ speaker:'Taras Ola', text:'Oddychaj. Wdech – wydech.', next:'end' }, end:{ speaker:'Taras Ola', text:'Idź powoli, to szybciej dojdziesz.' } } },
+  ops2: { nodes: { start:{ speaker:'DevOps Nina', text:'Alerty mnie słuchają.', next:'end' }, end:{ speaker:'DevOps Nina', text:'Ciebie też nauczę.' } } },
+  sec3: { nodes: { start:{ speaker:'Ochrona Zbyszek', text:'Damy radę. Tylko z identyfikatorem.', next:'end' }, end:{ speaker:'Ochrona Zbyszek', text:'Idź z uśmiechem.' } } },
+  ds1: { nodes: { start:{ speaker:'Data Science Magda', text:'Wykres też potrafi być empatyczny.', next:'end' }, end:{ speaker:'Data Science Magda', text:'Pokażę ci jak.' } } },
+  pr1: { nodes: { start:{ speaker:'Zakupy Marek', text:'Negocjacja zaczyna się od uśmiechu.', next:'end' }, end:{ speaker:'Zakupy Marek', text:'Dostaniesz lepszą cenę – i szacunek.' } } },
+  it2: { nodes: { start:{ speaker:'Junior Alicja', text:'PR straszy tylko pierwszy raz.', next:'end' }, end:{ speaker:'Junior Alicja', text:'Drugi już cieszy.' } } },
+  hr2: { nodes: { start:{ speaker:'Wellbeing Ewa', text:'Herbata?', choices:[{id:'yes',label:'Tak', effects:{stress:-3}},{id:'no',label:'Nie teraz'}] } } },
+  fac1: { nodes: { start:{ speaker:'Utrzymanie Marek', text:'Żarówka i nastrój. Obie zmienimy.', next:'end' }, end:{ speaker:'Utrzymanie Marek', text:'Daj znać, jak migocze.' } } },
+  mkt3: { nodes: { start:{ speaker:'Copy Gosia', text:'Słowa ważą. Wybieraj lżejsze.', next:'end' }, end:{ speaker:'Copy Gosia', text:'To też jest design.' } } },
+  rnd3: { nodes: { start:{ speaker:'Research Oli', text:'Zadam ci pytanie, którego nikt nie zadał.', next:'end' }, end:{ speaker:'Research Oli', text:'I znajdę na nie odpowiedź.' } } },
+  vip1: { nodes: { start:{ speaker:'Asystent CFO', text:'Słucham liczb. Ale widzę ludzi.', next:'end' }, end:{ speaker:'Asystent CFO', text:'Przynieś argumenty – nie slajdy.' } } },
   sec2: {
     nodes: {
       start: { speaker: 'Bezpieczeństwo Ela', text: 'Polityka to nie jest „kliknij OK”.', next: 'fork' },

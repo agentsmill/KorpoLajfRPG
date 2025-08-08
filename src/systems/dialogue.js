@@ -5,6 +5,22 @@ export function createDialogue(state) {
   let active = null; // { treeId, nodeId }
 
   function start(treeId, nodeId = 'start') {
+    // If tree is missing, open a generic smalltalk for this NPC
+    if (!DIALOG_TREES[treeId]) {
+      const meta = (state._npcMeta && state._npcMeta[treeId]) || {};
+      const title = meta.name || 'Pracownik';
+      const sub = [meta.faction?.toUpperCase(), meta.bio].filter(Boolean).join(' • ');
+      const opts = [
+        { id:'hi', label:'Smalltalk', effects:{ stress:-2 } },
+        { id:'tip', label:'Masz jakąś radę?', effects:{ jira:1 } },
+        { id:'bye', label:'Do zobaczenia' },
+      ];
+      openChoice(state, title, sub, opts, (pick)=>{
+        if (pick==='hi') state.log?.unshift('Smalltalk: krótkie „cześć”.');
+        if (pick==='tip') state.log?.unshift('Otrzymano wskazówkę (+1 Dane).');
+      });
+      return;
+    }
     active = { treeId, nodeId };
     step();
   }
