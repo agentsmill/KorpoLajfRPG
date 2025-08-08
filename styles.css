@@ -193,7 +193,7 @@ canvas#gameCanvas {
   #hud .hud-item:has(#hudStress),
   #hud .hud-item:has(#hudClock) { display: inline-flex; }
   /* Hide non-essential buttons on small screens */
-  #btnMusic, #btnTimeMode, #btnPopups, #btnFinish, #btnFactions, #btnLog, #btnBingo { display: none; }
+  #btnMusic, /* #btnTimeMode visible on mobile */ #btnPopups, #btnFinish, #btnFactions, #btnLog, #btnBingo { display: none; }
   /* Dialog sits near bottom but above safe area */
   #dialog { width: 96vw; bottom: calc(env(safe-area-inset-bottom) + 16px); }
 }

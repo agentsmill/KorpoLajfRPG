@@ -87,6 +87,7 @@ function resizeCanvas() {
     : 0;
   const availH = Math.max(200, vh - hudH - bottomH);
   // canvas aspect 4:3, maximize within width and available height
+  // Center canvas vertically in available area
   let cssW = Math.min(vw, Math.round(availH * (4/3)));
   let cssH = Math.min(availH, Math.round(vw * 0.75));
   // maintain exact 4:3
@@ -94,6 +95,9 @@ function resizeCanvas() {
   else cssH = Math.round(cssW * 3/4);
   canvas.style.width = cssW + 'px';
   canvas.style.height = cssH + 'px';
+  // center
+  const topPad = Math.max(0, Math.floor((availH - cssH) / 2));
+  canvas.style.marginTop = topPad + 'px';
   const needW = Math.round(cssW * dpr);
   const needH = Math.round(cssH * dpr);
   if (canvas.width !== needW || canvas.height !== needH) {
