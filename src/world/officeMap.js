@@ -1,5 +1,5 @@
-const WIDTH = 60;
-const HEIGHT = 40;
+const WIDTH = 90;
+const HEIGHT = 60;
 
 function createTile(type = 'floor', walkable = true) {
   return { type, walkable };
@@ -27,6 +27,14 @@ export function makeOfficeMap() {
       tiles[y + 2][x + 4] = createTile('desk', false);
     }
   }
+  // Druga aleja kubików (wschodnie skrzydło)
+  for (let y = 8; y <= 26; y += 6) {
+    for (let x = 50; x <= 78; x += 10) {
+      room(x, y, 8, 5, 'cubicle');
+      tiles[y + 2][x] = createTile('floor', true);
+      tiles[y + 2][x + 4] = createTile('desk', false);
+    }
+  }
   // Drukarka w open space
   tiles[14][20] = createTile('printer', true);
 
@@ -48,6 +56,12 @@ export function makeOfficeMap() {
   // Sala zarządu (duża)
   room(40, 24, 18, 11, 'meeting'); tiles[29][40] = createTile('floor', true);
   zones.push({ label: 'Sala zarządu', x: 49, y: 29 });
+  // Skrzydło Marketing
+  room(62, 2, 24, 10, 'meeting'); tiles[6][62] = createTile('floor', true);
+  zones.push({ label: 'Marketing', x: 74, y: 6 });
+  // Dział Prawny
+  room(70, 16, 12, 8, 'meeting'); tiles[20][70] = createTile('floor', true);
+  zones.push({ label: 'Legal', x: 76, y: 20 });
   // Pokój administracji
   room(2, 28, 12, 8, 'admin'); tiles[32][2] = createTile('floor', true);
   zones.push({ label: 'Administracja', x: 8, y: 32 });
@@ -59,6 +73,21 @@ export function makeOfficeMap() {
   room(30, 28, 8, 8, 'it_room'); tiles[32][30] = createTile('floor', true);
   zones.push({ label: 'IT', x: 34, y: 32 });
   tiles[30][34] = createTile('plant', true);
+  // R&D Lab (serwerownia 2 / lab)
+  room(62, 28, 16, 10, 'server'); tiles[32][62] = createTile('floor', true);
+  zones.push({ label: 'R&D Lab', x: 70, y: 32 });
+  // Lounge
+  room(2, 40, 14, 10, 'meeting'); tiles[44][2] = createTile('floor', true);
+  zones.push({ label: 'Lounge', x: 8, y: 44 });
+  // Taras
+  fill(18, 42, 30, 52, 'floor', true); zones.push({ label: 'Taras', x: 24, y: 46 });
+  tiles[44][20] = createTile('plant', true);
+  tiles[46][28] = createTile('plant', true);
+  // Dodatkowe wyposażenie
+  tiles[10][56] = createTile('fridge', true);
+  tiles[12][58] = createTile('espresso', true);
+  tiles[18][72] = createTile('printer', true);
+  tiles[34][68] = createTile('printer', true);
 
   function get(x, y) {
     if (x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT) return createTile('void', false);

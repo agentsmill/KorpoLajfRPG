@@ -12,6 +12,19 @@ export function createNPCs() {
     { id: 'fin', name: 'Finanse Iwona', x: 40, y: 6, color: '#34d399', faction:'mgmt', bio:'Lubi liczby, które opowiadają historie.', mood:'stern', hair:'#111827', skin:'#eec39a', shirt:'#10b981' },
     { id: 'ops', name: 'DevOps Kamil', x: 22, y: 6, color: '#f59e0b', faction:'it', bio:'Jego zegar odmierza opóźnienia deployów.', mood:'neutral', hair:'#78350f', skin:'#f1c27d', shirt:'#f59e0b' },
     { id: 'sec2', name: 'Bezpieczeństwo Ela', x: 14, y: 18, color: '#06b6d4', faction:'ops', bio:'Procedury pisze dla ludzi, nie dla PDF-ów.', mood:'stern', hair:'#0e7490', skin:'#f6d7b0', shirt:'#06b6d4' },
+    // Nowi NPC
+    { id: 'mkt1', name: 'Marketing Kasia', x: 72, y: 6, color: '#f472b6', faction:'mgmt', bio:'Sprzeda lód pingwinom, ale słucha ludzi.', mood:'smile', hair:'#be185d', skin:'#f6d7b0', shirt:'#db2777' },
+    { id: 'mkt2', name: 'Brand Piotr', x: 76, y: 8, color: '#fb7185', faction:'mgmt', bio:'Kolory ma w małym palcu, budżet w drugim.', mood:'neutral', hair:'#1f2937', skin:'#f1c27d', shirt:'#fb7185' },
+    { id: 'law1', name: 'Legal Marta', x: 76, y: 20, color: '#60a5fa', faction:'mgmt', bio:'Umie powiedzieć „nie” tak, że brzmi jak „chronię cię”.', mood:'stern', hair:'#1e3a8a', skin:'#eec39a', shirt:'#3b82f6' },
+    { id: 'law2', name: 'Legal Tomek', x: 72, y: 18, color: '#93c5fd', faction:'mgmt', bio:'Śni o krótkich regulaminach.', mood:'wry', hair:'#64748b', skin:'#f1c27d', shirt:'#93c5fd' },
+    { id: 'rnd1', name: 'R&D Antek', x: 66, y: 32, color: '#22c55e', faction:'it', bio:'Prototypy kocha bardziej niż produkcję.', mood:'smile', hair:'#16a34a', skin:'#f1c27d', shirt:'#22c55e' },
+    { id: 'rnd2', name: 'R&D Sara', x: 74, y: 34, color: '#a3e635', faction:'it', bio:'Zna algorytm na „wow”.', mood:'soft', hair:'#365314', skin:'#f6d7b0', shirt:'#84cc16' },
+    { id: 'diz1', name: 'Designer Kuba', x: 30, y: 10, color: '#a78bfa', faction:'hr', bio:'Siatki, marginesy i człowiek w środku.', mood:'smile', hair:'#4c1d95', skin:'#f1c27d', shirt:'#8b5cf6' },
+    { id: 'acc1', name: 'Księgowość Basia', x: 42, y: 6, color: '#34d399', faction:'mgmt', bio:'Umie sprawić, że cyferki przestają boleć.', mood:'neutral', hair:'#1f2937', skin:'#f6d7b0', shirt:'#10b981' },
+    { id: 'lou1', name: 'Barista Leon', x: 8, y: 44, color: '#f59e0b', faction:'hr', bio:'Espresso jak poezja. Gratis historia.', mood:'smile', hair:'#92400e', skin:'#f1c27d', shirt:'#f59e0b' },
+    { id: 'ter1', name: 'Taras Ola', x: 24, y: 46, color: '#06b6d4', faction:'hr', bio:'Uczy oddychać między taskami.', mood:'soft', hair:'#0e7490', skin:'#f6d7b0', shirt:'#06b6d4' },
+    { id: 'ops2', name: 'DevOps Nina', x: 64, y: 28, color: '#f59e0b', faction:'it', bio:'Uspokaja alerty głosem.', mood:'neutral', hair:'#9a3412', skin:'#f1c27d', shirt:'#f59e0b' },
+    { id: 'sec3', name: 'Ochrona Zbyszek', x: 10, y: 34, color: '#6366f1', faction:'ops', bio:'„Nie da się” to tylko propozycja.', mood:'wry', hair:'#111827', skin:'#deb887', shirt:'#4f46e5' },
   ];
 }
 
