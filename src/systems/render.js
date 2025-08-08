@@ -109,6 +109,7 @@ function drawHUD(state, canvas) {
   ui.hudCoffee.textContent = String(state.player.coffee);
   ui.hudStress.textContent = String(Math.round(state.player.stress));
   ui.hudJira.textContent = String(state.player.jira);
+  if (ui.hudInvCount) ui.hudInvCount.textContent = String((state.inventory||[]).length);
   ui.hudQuest.textContent = state.quests.currentTitle();
   // faction bars + dynamic affiliation label
   const it = Math.max(-100, Math.min(100, state.rep.it||0));

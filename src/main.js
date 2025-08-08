@@ -11,6 +11,7 @@ const ui = {
   hudCoffee: document.getElementById('hudCoffee'),
   hudStress: document.getElementById('hudStress'),
   hudJira: document.getElementById('hudJira'),
+  hudInvCount: document.getElementById('hudInvCount'),
   hudQuest: document.getElementById('hudQuest'),
   hudClock: document.getElementById('hudClock'),
   btnMusic: document.getElementById('btnMusic'),
