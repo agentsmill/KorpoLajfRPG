@@ -3,7 +3,7 @@ import { makeOfficeMap } from '../world/officeMap.js';
 import { createPlayer } from '../world/player.js';
 import { createNPCs } from '../world/npcs.js';
 import { drawScene } from './render.js';
-import { openDialog, closeDialog } from './ui.js';
+import { openDialog, closeDialog, openChoice } from './ui.js';
 import { createQuests } from '../world/quests.js';
 import { createAudio } from './lofi.js';
 import { createSprites } from './sprites.js';
@@ -173,7 +173,7 @@ export function createGame({ canvas, ctx, ui }) {
       if (state.story.consumeInteraction()) return;
       // interaktywne obiekty (kuchnia/roślina)
       if (tryUseInteractive()) return;
-      const target = state.npcs.find(n => Math.hypot(n.x - state.player.x, n.y - state.player.y) < 1.2);
+      const target = state.npcs.find(n => Math.hypot(n.x - state.player.x, n.y - state.player.y) < 1.6);
       if (target) {
           state._currentNpcId = target.id;
         // route to dialogue trees by NPC id
@@ -181,7 +181,18 @@ export function createGame({ canvas, ctx, ui }) {
           const treeId = (target.id === 'scrum' || target.id === 'pm') ? 'mgmt' : target.id;
           state.dialogue.start(treeId, 'start');
         } else {
-          state.quests.onTalk(target, state);
+          // Lekki smalltalk dla NPC bez drzewka
+          const faction = (target.faction||'neutral').toUpperCase();
+          const body = `Rozmawiasz z ${target.name}.`; 
+          const opts = [
+            { id:'hi', label:'Co słychać?' },
+            { id:'advice', label:'Masz jakąś radę?' },
+            { id:'bye', label:'Do zobaczenia' },
+          ];
+          openChoice(state, target.name, body, opts, (pick)=>{
+            if (pick==='hi') addLog('Smalltalk: krótkie „cześć”.');
+            if (pick==='advice') { addLog('Usłyszałeś drobną radę.'); state.player.stress = Math.max(0, state.player.stress - 2); }
+          });
         }
         addLog(`Rozmowa: ${target.name}`);
         if (target.id === 'scrum') ui.btnBingo?.classList.remove('hidden');
@@ -199,6 +210,8 @@ export function createGame({ canvas, ctx, ui }) {
     }
 
     updateRoomLabel();
+
+    updateInteractionHint();
 
     // time flow according to selected mode
     if ((state.timeScale ?? 510/(30*60)) > 0) {
@@ -391,6 +404,28 @@ export function createGame({ canvas, ctx, ui }) {
       state._autoCEO = true;
       goToCEO();
     }
+  }
+
+  function updateInteractionHint() {
+    // znajdź najbliższy obiekt interaktywny/NPC i ustaw hint
+    let hint = null;
+    const nearObj = (dx,dy)=> Math.hypot(dx,dy) < 1.4;
+    // objects
+    const px = Math.round(state.player.x), py = Math.round(state.player.y);
+    const around = [[px,py],[px+1,py],[px-1,py],[px,py+1],[px,py-1]];
+    for (const [x,y] of around) {
+      const t = state.map.get(x,y); if (!t) continue;
+      if (t.type==='espresso') hint = { label:'[E] Espresso' };
+      if (t.type==='fridge') hint = { label:'[E] Lodówka' };
+      if (t.type==='plant') hint = { label:'[E] Stefan' };
+      if (t.type==='printer') hint = { label:'[E] Drukarka' };
+      if (hint) break;
+    }
+    if (!hint) {
+      const npc = state.npcs.find(n => Math.hypot(n.x - state.player.x, n.y - state.player.y) < 1.6);
+      if (npc) hint = { label:`[E] Rozmowa: ${npc.name}` };
+    }
+    state._hint = hint;
   }
 
   function goToCEO() {

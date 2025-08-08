@@ -173,6 +173,7 @@ export function drawScene(state, ctx, canvas) {
   drawZoneLabels(state, ctx, canvas);
   drawInteractiveHints(state, ctx);
   drawStressGlow(state, ctx, canvas);
+  drawEHint(state, ctx, canvas);
 }
 
 let animTime = 0;
@@ -296,6 +297,22 @@ function drawInteractiveHints(state, ctx) {
       }
     }
   }
+}
+
+function drawEHint(state, ctx, canvas) {
+  if (!state._hint) return;
+  const msg = state._hint.label;
+  ctx.save();
+  ctx.font = '12px monospace';
+  const w = Math.ceil(ctx.measureText(msg).width) + 12;
+  const x = 12, y = canvas.height - 42;
+  ctx.fillStyle = 'rgba(17,23,40,0.8)';
+  ctx.fillRect(x, y, w, 24);
+  ctx.strokeStyle = '#2a2f36';
+  ctx.strokeRect(x, y, w, 24);
+  ctx.fillStyle = '#dbeafe';
+  ctx.fillText(msg, x + 6, y + 16);
+  ctx.restore();
 }
 
 function drawStressGlow(state, ctx, canvas) {
