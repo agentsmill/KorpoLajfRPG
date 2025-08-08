@@ -141,17 +141,15 @@ export function createGame({ canvas, ctx, ui }) {
         state._popupsOn = !state._popupsOn;
         ui.btnPopups.textContent = state._popupsOn ? '🔔 Popups: ON' : '🔕 Popups: OFF';
       });
-      // Theme button used as Time Mode switch (30/60/90/∞)
-      ui.btnTheme?.addEventListener('click', () => {
+      // Time Mode switch (30/60/90/∞) – we use btnTimeMode if present
+      ui.btnTimeMode?.addEventListener('click', () => {
         const seq = [510/(30*60), 510/(60*60), 510/(90*60), 0];
         const s = state.timeScale ?? seq[0];
         const idx = seq.findIndex(v => Math.abs((s||0) - v) < 1e-6);
         state.timeScale = seq[(idx + 1) % seq.length];
         // update HUD label if present
-        if (ui.btnTimeMode) {
-          const label = state.timeScale === 0 ? '∞' : (Math.abs(state.timeScale - 510/(60*60)) < 1e-6 ? '60m' : Math.abs(state.timeScale - 510/(90*60)) < 1e-6 ? '90m' : '30m');
-          ui.btnTimeMode.textContent = `⏱️ ${label}`;
-        }
+        const label = state.timeScale === 0 ? '∞' : (Math.abs(state.timeScale - 510/(60*60)) < 1e-6 ? '60m' : Math.abs(state.timeScale - 510/(90*60)) < 1e-6 ? '90m' : '30m');
+        ui.btnTimeMode.textContent = `⏱️ ${label}`;
       });
 
       setupSkillsSelection();
