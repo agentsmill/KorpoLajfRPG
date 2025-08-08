@@ -266,13 +266,15 @@ function drawZoneLabels(state, ctx, canvas) {
   ctx.strokeStyle = '#1f2937';
   ctx.font = '10px monospace';
   for (const z of zones) {
-    const x = Math.floor(z.x * TILE - state.camera.x);
-    const y = Math.floor(z.y * TILE - state.camera.y);
+    const x = Math.round(z.x * TILE - state.camera.x + TILE/2);
+    const y = Math.round(z.y * TILE - state.camera.y + TILE/2);
     const w = ctx.measureText(z.label).width + 10;
-    ctx.fillRect(x - w/2, y - 18, w, 14);
-    ctx.strokeRect(x - w/2, y - 18, w, 14);
+    const bx = Math.round(x - w/2);
+    const by = Math.round(y - 8);
+    ctx.fillRect(bx, by, w, 14);
+    ctx.strokeRect(bx, by, w, 14);
     ctx.fillStyle = '#dbeafe';
-    ctx.fillText(z.label, x - w/2 + 5, y - 7);
+    ctx.fillText(z.label, bx + 5, by + 10);
     ctx.fillStyle = 'rgba(15,23,42,0.6)';
   }
   ctx.restore();
