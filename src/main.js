@@ -56,6 +56,9 @@ const ui = {
   trackerList: document.getElementById('trackerList'),
   toast: document.getElementById('toast'),
   hudFaction: document.getElementById('hudFaction'),
+  // joystick
+  joy: document.getElementById('joy'),
+  joyKnob: document.getElementById('joyKnob'),
 };
 
 const game = createGame({ canvas, ctx, ui });
@@ -75,5 +78,22 @@ function resizeCanvas() {
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
+
+// Basic virtual joystick for mobile
+(() => {
+  const joy = ui.joy, knob = ui.joyKnob; if (!joy || !knob) return;
+  let active = false, origin = {x:0,y:0};
+  let center = {x:0,y:0};
+  function setCenter(){ const r = joy.getBoundingClientRect(); center = { x: r.left + r.width/2, y: r.top + r.height/2 }; }
+  setCenter(); window.addEventListener('resize', setCenter);
+  const maxR = 40;
+  function start(e){ active = true; origin = getPoint(e); move(e); }
+  function end(){ active = false; knob.style.transform = 'translate(-50%,-50%)'; window._joy = {dx:0,dy:0,active:false}; }
+  function move(e){ if (!active) return; const p = getPoint(e); const dx = p.x - center.x, dy = p.y - center.y; const len = Math.max(1, Math.hypot(dx,dy)); const cl = Math.min(maxR, len); const nx = dx/len*cl, ny = dy/len*cl; knob.style.transform = `translate(${nx}px, ${ny}px)`; window._joy = { dx: dx/80, dy: dy/80, active:true }; }
+  function getPoint(e){ const t = (e.touches && e.touches[0]) || e.changedTouches?.[0] || e; return { x: t.clientX, y: t.clientY }; }
+  joy.addEventListener('touchstart', start, {passive:true});
+  joy.addEventListener('touchmove', move, {passive:true});
+  joy.addEventListener('touchend', end, {passive:true});
+})();
 
 

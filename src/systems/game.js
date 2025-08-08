@@ -143,6 +143,11 @@ export function createGame({ canvas, ctx, ui }) {
     if (state.keys.has('arrowdown') || state.keys.has('s')) move.y += 1;
     if (state.keys.has('arrowleft') || state.keys.has('a')) move.x -= 1;
     if (state.keys.has('arrowright') || state.keys.has('d')) move.x += 1;
+    // virtual joystick influence (mobile)
+    if (window._joy && window._joy.active) {
+      move.x += Math.max(-1, Math.min(1, window._joy.dx || 0));
+      move.y += Math.max(-1, Math.min(1, window._joy.dy || 0));
+    }
 
     // normalize
     if (move.x !== 0 && move.y !== 0) { move.x *= 0.7071; move.y *= 0.7071; }
@@ -357,6 +362,14 @@ export function createGame({ canvas, ctx, ui }) {
       const title = state.sideQuests.roll();
       addLog(`Side-quest: ${title}`);
     }
+    // printer quest kickoff
+    if ((!state._printerKick || t - state._printerKick > 9999) && t >= 9 * 60 + 10) {
+      state._printerKick = t;
+      addLog('Open space: „Drukarka znowu mieli. Ktoś ogarnie?”');
+      // add objective to check printer
+      const exists = (state.objectives||[]).some(o=>o.id==='printer_check');
+      if (!exists) state.objectives.unshift({ id:'printer_check', label:'Sprawdź drukarkę w boksach', x: 20, y: 14 });
+    }
   }
 
   // Interaktywne obiekty: kuchnia (lodówka/ekspres), roślina Stefan
@@ -397,6 +410,20 @@ export function createGame({ canvas, ctx, ui }) {
         if (!canUse('stefan', 40)) { showToast('Stefan już cię uspokoił.'); return true; }
         state.player.stress = clamp(state.player.stress - 10, 0, 100);
         showToast('🌿 „Stefan”: −10 stres');
+        return true;
+      }
+      if (t.type === 'printer') {
+        if (!canUse('printer', 20)) { showToast('🖨️ Drukarka: „Mielę…”'); return true; }
+        // 30% szansa na zacięcie — stres +3, inaczej dane +1
+        if (Math.random() < 0.3) {
+          state.player.stress = clamp(state.player.stress + 3, 0, 100);
+          showToast('🖨️ Zacięcie papieru! (+3 stres)');
+        } else {
+          state.player.jira = (state.player.jira||0) + 1; // „Dane” do raportu
+          showToast('🖨️ Wydrukowane! 📊 +1 Dane');
+          // complete objective if exists
+          state.objectives = (state.objectives||[]).filter(o=>o.id!=='printer_check');
+        }
         return true;
       }
     }

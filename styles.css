@@ -174,3 +174,23 @@ canvas#gameCanvas {
   #dialog { width: 96%; bottom: 120px; z-index:7; }
 }
 
+/* Mobile joystick */
+.joy {
+  position: fixed;
+  left: 12px; bottom: 90px; z-index: 9;
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  background: rgba(17,23,40,.35);
+  border: 1px solid #2a2f36;
+  display: none;
+}
+.joy-knob {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(165,180,252,.8);
+  box-shadow: 0 4px 14px rgba(0,0,0,.3);
+}
+@media (pointer: coarse) {
+  .joy { display: block; }
+}
+

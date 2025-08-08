@@ -27,6 +27,8 @@ export function makeOfficeMap() {
       tiles[y + 2][x + 4] = createTile('desk', false);
     }
   }
+  // Drukarka w open space
+  tiles[14][20] = createTile('printer', true);
 
   // Kuchnia
   fill(2, 2, 13, 10, 'kitchen', true); // duża kuchnia

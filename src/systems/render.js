@@ -59,6 +59,11 @@ function drawGrid(ctx, map, camera, canvas) {
       if (tile.type === 'espresso') { ctx.fillStyle = '#1f2937'; ctx.fillRect(screenX+4,screenY+8,8,4); ctx.fillStyle='#f59e0b'; ctx.fillRect(screenX+6,screenY+7,2,1); }
       if (tile.type === 'meeting') { ctx.strokeStyle = '#2a3558'; ctx.strokeRect(screenX + 1, screenY + 1, 14, 14); }
       if (tile.type === 'server') { ctx.fillStyle = '#0ea5e9'; ctx.fillRect(screenX+4, screenY+4, 2, 8); ctx.fillStyle = '#38bdf8'; ctx.fillRect(screenX+8, screenY+4, 2, 8); }
+      if (tile.type === 'printer') {
+        ctx.fillStyle = '#cbd5e1'; ctx.fillRect(screenX+3, screenY+6, 10, 7);
+        ctx.fillStyle = '#0f172a'; ctx.fillRect(screenX+4, screenY+7, 8, 1);
+        ctx.fillStyle = '#e2e8f0'; ctx.fillRect(screenX+5, screenY+4, 6, 2); // kartka
+      }
     }
   }
 }
@@ -285,7 +290,7 @@ function drawInteractiveHints(state, ctx) {
     for (let x=0; x<state.map.width; x++) {
       const t = state.map.get(x, y);
       if (!t || !t.type) continue;
-      if (t.type === 'espresso' || t.type === 'fridge') {
+      if (t.type === 'espresso' || t.type === 'fridge' || t.type === 'printer') {
         mark(x, y, t.type === 'espresso' ? '#f59e0b' : '#93c5fd');
       }
     }

@@ -25,7 +25,7 @@
       <div id="hud">
         <div class="hud-item">☕ Kawa: <span id="hudCoffee">0</span></div>
         <div class="hud-item">📈 Stres: <span id="hudStress">0</span>/100</div>
-        <div class="hud-item">📑 Dowody: <span id="hudJira">0</span></div>
+        <div class="hud-item">📊 Dane: <span id="hudJira">0</span></div>
         <div class="hud-item">🕒 <span id="hudClock">09:00</span></div>
         <div class="hud-item">🏳️ Frakcja: <span id="hudFaction">—</span></div>
         <div class="hud-item">🎒 Ekwipunek: <span id="hudInvCount">0</span></div>
@@ -63,7 +63,7 @@
           - Obiekty interaktywne (E): lodówka/ekspres w kuchni (kawa, cooldown), roślina „Stefan” (–stres, cooldown).<br/>
           - Stres spowalnia postać i blokuje niektóre opcje dialogowe. Kawa i „Stefan” obniżają stres.<br/>
           - Codzienne eventy: daily o 9:05, randomowe side-questy w ciągu dnia.<br/>
-          - Cel: przygotuj raport (człowiek/liczba/ryzyko) na spotkanie zarządu o 17:30. Zbieraj <b>Dowody</b> (📑) jako case’y do prezentacji.<br/>
+          - Cel: przygotuj raport (człowiek/liczba/ryzyko) na spotkanie zarządu o 17:30. Zbieraj <b>Dane</b> (📊) – konkretne case’y do prezentacji.<br/>
           - Tryby czasu (klawisze 1/2/3): 30/60/90 min na przejście (9:00→17:30). Dłuższe tryby pozwalają odkryć więcej ścieżek dialogowych.<br/>
           - Lista celów: 📍 Cele (HUD) – otwiera podgląd zadań zamiast stałego okienka.
         </div>
@@ -139,6 +139,10 @@
           <span id="skillsCounter" class="mono">Wybrane: 0/2</span>
           <button id="skillsConfirm" class="btn" disabled>Start</button>
         </div>
+      </div>
+      <!-- Mobile joystick -->
+      <div id="joy" class="joy">
+        <div id="joyKnob" class="joy-knob"></div>
       </div>
     </div>
     <script type="module" src="./src/main.js"></script>
