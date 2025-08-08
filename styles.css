@@ -228,3 +228,9 @@ canvas#gameCanvas {
 }
 @media (pointer: coarse) { .action-btn { display: inline-flex; align-items:center; justify-content:center; } }
 
+/* Desktop: no on-screen controls, HUD not scrollable */
+@media (pointer: fine) {
+  .dpad, .action-btn { display: none !important; }
+  #hud { overflow: visible; white-space: normal; }
+}
+

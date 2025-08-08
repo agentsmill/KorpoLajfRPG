@@ -90,6 +90,9 @@ export function createGame({ canvas, ctx, ui }) {
 
       window.addEventListener('keydown', (e) => {
         if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault();
+        // ignore keypress if focus is on a button or input
+        const tag = (document.activeElement && document.activeElement.tagName) || '';
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON') return;
         state.keys.add(e.key.toLowerCase());
         if (e.key === 'Escape') {
           closeDialog(state);
@@ -104,7 +107,11 @@ export function createGame({ canvas, ctx, ui }) {
       window.addEventListener('keyup', (e) => state.keys.delete(e.key.toLowerCase()));
       // WASD aliases
       const keyMap = { w:'arrowup', s:'arrowdown', a:'arrowleft', d:'arrowright' };
-      window.addEventListener('keydown', (e)=>{ const m=keyMap[e.key.toLowerCase()]; if(m){e.preventDefault(); state.keys.add(m);} });
+      window.addEventListener('keydown', (e)=>{ const m=keyMap[e.key.toLowerCase()]; if(m){
+        const tag = (document.activeElement && document.activeElement.tagName) || '';
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON') return;
+        e.preventDefault(); state.keys.add(m);
+      }});
       window.addEventListener('keyup', (e)=>{ const m=keyMap[e.key.toLowerCase()]; if(m){ state.keys.delete(m);} });
       // assign sprites
       state.player.sprite = state.sprites.makeSprite('#06d6a0');
@@ -300,6 +307,14 @@ export function createGame({ canvas, ctx, ui }) {
         const scale = Math.max(1, state.zoom||1);
         const worldX = (cx * (canvas.width/rect.width) / scale + state.camera.x) / 16;
         const worldY = (cy * (canvas.height/rect.height) / scale + state.camera.y) / 16;
+        // If click is already close to an NPC, open dialog instantly
+        const nearNow = state.npcs.find(n => Math.hypot(n.x - state.player.x, n.y - state.player.y) < 1.6 && Math.hypot(n.x - worldX, n.y - worldY) < 1.0);
+        if (nearNow) {
+          state._currentNpcId = nearNow.id;
+          const treeId = (nearNow.id === 'scrum' || nearNow.id === 'pm') ? 'mgmt' : nearNow.id;
+          if (state.dialogue && (state.dialogue.start)) state.dialogue.start(treeId, 'start');
+          return;
+        }
         state.tapTarget = { x: worldX, y: worldY };
         // prepare auto-interact when target is NPC or interactive tile
         const nearNpc = state.npcs.find(n => Math.hypot(n.x - worldX, n.y - worldY) < 0.9);
