@@ -43,6 +43,8 @@ export function createGame({ canvas, ctx, ui }) {
     paused: false,
     // in‑game minutes advanced per real second; 9:00→17:30 (510 min) in 30 min → 510/1800 ≈ 0.2833
     timeScale: 510 / (30 * 60),
+    zoom: 1,
+    _interactRequested: false,
   };
 
   function init() {
@@ -58,6 +60,11 @@ export function createGame({ canvas, ctx, ui }) {
       setupEasterEggs(state);
       state.story = createStory(state);
       state.dialogue = createDialogue(state);
+      // prefer bigger zoom on touch devices for readability
+      try {
+        const isTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+        state.zoom = isTouch ? 1.8 : 1.0;
+      } catch (e) { state.zoom = 1.0; }
       state.objective = { id: 'report', label: 'Przygotuj raport na 17:30: człowiek/liczba/ryzyko', x: 49, y: 29 };
       state.objectives = [ state.objective ];
       // Hard objective: board meeting at 17:30 (always visible w trackerze)
@@ -164,15 +171,18 @@ export function createGame({ canvas, ctx, ui }) {
     if (state.map.isWalkable(state.player.x, nextY)) state.player.y = nextY;
 
     // Smooth camera follow (lerp)
-    const targetCamX = state.player.x * 16 - canvas.width / 2 + 8;
-    const targetCamY = state.player.y * 16 - canvas.height / 2 + 8;
+    const vw = canvas.width / Math.max(1, state.zoom || 1);
+    const vh = canvas.height / Math.max(1, state.zoom || 1);
+    const targetCamX = state.player.x * 16 - vw / 2 + 8;
+    const targetCamY = state.player.y * 16 - vh / 2 + 8;
     const lerp = 1 - Math.pow(0.001, delta); // frame-rate independent
     state.camera.x = Math.floor(state.camera.x + (targetCamX - state.camera.x) * lerp);
     state.camera.y = Math.floor(state.camera.y + (targetCamY - state.camera.y) * lerp);
 
-      // interaction
-    if (state.keys.has('e')) {
+      // interaction (keyboard E or mobile confirm button)
+    if (state.keys.has('e') || state._interactRequested) {
       state.keys.delete('e');
+      state._interactRequested = false;
       if (state.story.consumeInteraction()) return;
       // interaktywne obiekty (kuchnia/roślina)
       if (tryUseInteractive()) return;
@@ -244,6 +254,10 @@ export function createGame({ canvas, ctx, ui }) {
       state.lastTime = performance.now();
       requestAnimationFrame(loop);
     });
+  }
+
+  function requestInteract() {
+    state._interactRequested = true;
   }
 
   function setupSkillsSelection() {
@@ -561,7 +575,7 @@ export function createGame({ canvas, ctx, ui }) {
   function formatTime(min){ const h=Math.floor(min/60), m=Math.floor(min%60); return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`; }
   function escapeHtml(s){ return s.replace(/[&<>\"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
 
-  return { start };
+  return { start, requestInteract };
 }
 
 

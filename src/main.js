@@ -100,4 +100,13 @@ resizeCanvas();
   joy.addEventListener('touchend', end, {passive:true});
 })();
 
+// Mobile confirm button triggers in-game interaction (like pressing E)
+(() => {
+  const btn = document.getElementById('actionConfirm');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    if (game.requestInteract) game.requestInteract();
+  });
+})();
+
 

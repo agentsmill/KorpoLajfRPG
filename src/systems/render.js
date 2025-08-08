@@ -161,9 +161,14 @@ export function drawScene(state, ctx, canvas) {
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   } else {
-    drawGrid(ctx, state.map, state.camera, canvas);
+    const zoom = Math.max(1, state.zoom || 1);
+    const view = { width: canvas.width / zoom, height: canvas.height / zoom };
+    ctx.save();
+    ctx.scale(zoom, zoom);
+    drawGrid(ctx, state.map, state.camera, view);
     drawNPCs(ctx, state.npcs, state.camera);
     drawPlayer(ctx, state.player, state.camera);
+    ctx.restore();
   }
   // subtle dust particles overlay
   drawDust(ctx, canvas);
