@@ -300,7 +300,16 @@ export function createGame({ canvas, ctx, ui }) {
   function updatePhoneUI() {
     if (!ui.inboxList || !ui.invList) return;
     ui.inboxList.innerHTML = (state.inbox||[]).map(m => `<div>[${new Date(m.at).toLocaleTimeString()}] <b>${escapeHtml(m.from)}</b>: ${escapeHtml(m.text)}</div>`).join('') || '<i>Brak wiadomości</i>';
-    ui.invList.innerHTML = (state.inventory||[]).map(i => `<div>• ${escapeHtml(i)}</div>`).join('') || '<i>Pusto</i>';
+    const invHtml = (state.inventory||[]).map(i => `<div>• ${escapeHtml(i)}</div>`).join('') || '<i>Pusto</i>';
+    const flags = state.flags || {};
+    const pillars = [
+      { k:'case_hr', label:'Człowiek' },
+      { k:'case_it', label:'Liczba' },
+      { k:'case_ops_risk', label:'Ryzyko' },
+    ];
+    const prog = pillars.map(p=>`<span>${p.label}: ${flags[p.k]? '✓':'—'}</span>`).join(' • ');
+    const report = `<div style="margin-top:10px"><b>Raport 17:30</b><div>📊 Dane: ${state.player.jira||0}</div><div>${prog}</div></div>`;
+    ui.invList.innerHTML = invHtml + report;
   }
   state._updatePhoneUI = updatePhoneUI;
 
@@ -438,6 +447,7 @@ export function createGame({ canvas, ctx, ui }) {
     state._toastUntil = now + 1000;
     ui.toast.textContent = msg;
     ui.toast.classList.remove('hidden');
+    if (navigator.vibrate) { try { navigator.vibrate(18); } catch(e){} }
     clearTimeout(state._toastTimer);
     state._toastTimer = setTimeout(()=> ui.toast.classList.add('hidden'), 1200);
   }

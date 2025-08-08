@@ -2,8 +2,10 @@ export function createProceduralQuests(state) {
   const pool = [
     { id: 'printer', title: '🖨️ Ożywić drukarkę', effect: s => { s.player.stress += 6; maybeToast(s, 'Drukarka wydrukowała lorem ipsum i paragon z 2007.'); } },
     { id: 'coffeeBeans', title: '☕ Zmielić ziarna premium z kuchni', effect: s => { s.player.coffee += 1; maybeToast(s, 'Aromat kawy obniżył stres.'); s.player.stress = Math.max(0, s.player.stress - 8); } },
-    { id: 'jiraTickets', title: '🧩 Zamknąć 3 tickety z JIRA', effect: s => { s.player.jira += 3; maybeToast(s, 'Zamknąłeś ticket „RefactorLegacyUtils_v12_final2”.'); } },
+    { id: 'dataTickets', title: '📊 Zbierz 3 Dane z tasków', effect: s => { s.player.jira += 3; maybeToast(s, 'Masz nowe liczby do raportu.'); } },
     { id: 'sanitizer', title: '🧴 Uzupełnić płyn do dezynfekcji', effect: s => { maybeToast(s, 'Twoje ręce pachną jak serwerownia po remoncie.'); } },
+    { id: 'cactus', title: '🌵 Podlej biurowego kaktusa', effect: s => { s.player.stress = Math.max(0, s.player.stress - 4); maybeToast(s, 'Kaktus nie potrzebował, ale docenił.'); } },
+    { id: 'retro', title: '🕹️ Znajdź retro‑plakat „No Bugs, No Glory”', effect: s => { maybeToast(s, 'Znalazłeś plakat – morale ++'); } },
   ];
 
   function roll() {

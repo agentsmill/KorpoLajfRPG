@@ -172,6 +172,7 @@ export function drawScene(state, ctx, canvas) {
   drawRoomLabel(state, ctx, canvas);
   drawZoneLabels(state, ctx, canvas);
   drawInteractiveHints(state, ctx);
+  drawStressGlow(state, ctx, canvas);
 }
 
 let animTime = 0;
@@ -295,6 +296,16 @@ function drawInteractiveHints(state, ctx) {
       }
     }
   }
+}
+
+function drawStressGlow(state, ctx, canvas) {
+  const s = Math.max(0, Math.min(100, state.player.stress||0));
+  if (s < 40) return;
+  const alpha = ((s-40)/60) * 0.25;
+  ctx.save();
+  ctx.fillStyle = `rgba(239,71,111,${alpha.toFixed(3)})`;
+  ctx.fillRect(0,0,canvas.width, canvas.height);
+  ctx.restore();
 }
 
 
