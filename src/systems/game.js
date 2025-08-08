@@ -111,6 +111,8 @@ export function createGame({ canvas, ctx, ui }) {
       ui.btnLogClose?.addEventListener('click', () => ui.logModal.classList.add('hidden'));
       ui.btnBingo?.addEventListener('click', openBingo);
       ui.btnBingoClose?.addEventListener('click', () => ui.bingoModal.classList.add('hidden'));
+      // Finish now (go to CEO)
+      ui.btnFinish?.addEventListener('click', () => goToCEO());
       // Phone
       ui.btnPhone?.addEventListener('click', () => { updatePhoneUI(); ui.phoneModal?.classList.remove('hidden'); ui.overlay?.classList.remove('hidden'); });
       ui.btnPhoneClose?.addEventListener('click', () => { ui.phoneModal?.classList.add('hidden'); ui.overlay?.classList.add('hidden'); });
@@ -199,7 +201,9 @@ export function createGame({ canvas, ctx, ui }) {
     updateRoomLabel();
 
     // time flow according to selected mode
-    state.timeMinutes += delta * (state.timeScale || 510/(30*60));
+    if ((state.timeScale ?? 510/(30*60)) > 0) {
+      state.timeMinutes += delta * (state.timeScale ?? 510/(30*60));
+    }
     ui.hudClock.textContent = formatTime(state.timeMinutes);
     updateFactionHUD();
     handleTimedEvents();
@@ -257,21 +261,23 @@ export function createGame({ canvas, ctx, ui }) {
         body.innerHTML += `<br/>- Tryby czasu: 30 min (domyślny), 60 min, 90 min – odkryjesz więcej ścieżek dialogowych.`;
       }
     }
-    // Add simple hotkeys: 1=30min, 2=60min, 3=90min
+    // Add simple hotkeys: 1=30min, 2=60min, 3=90min, 4=∞
     window.addEventListener('keydown', (e) => {
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
       if (e.key === '1') state.timeScale = 510 / (30 * 60);
       if (e.key === '2') state.timeScale = 510 / (60 * 60);
       if (e.key === '3') state.timeScale = 510 / (90 * 60);
+      if (e.key === '4') state.timeScale = 0;
       updateTimeModeButton();
     });
 
     // HUD button to cycle modes
     if (ui.btnTimeMode) {
       ui.btnTimeMode.onclick = () => {
-        const s = state.timeScale || 510 / (30 * 60);
-        const next = s <= 510/(30*60) + 1e-6 ? 510/(60*60) : s <= 510/(60*60) + 1e-6 ? 510/(90*60) : 510/(30*60);
-        state.timeScale = next;
+        const seq = [510/(30*60), 510/(60*60), 510/(90*60), 0];
+        const s = state.timeScale ?? seq[0];
+        const idx = seq.findIndex(v => Math.abs((s||0) - v) < 1e-6);
+        state.timeScale = seq[(idx + 1) % seq.length];
         updateTimeModeButton();
       };
       updateTimeModeButton();
@@ -280,9 +286,10 @@ export function createGame({ canvas, ctx, ui }) {
 
   function updateTimeModeButton() {
     if (!ui.btnTimeMode) return;
-    const s = state.timeScale || 510 / (30 * 60);
+    const s = state.timeScale ?? 510 / (30 * 60);
     let label = '30m';
-    if (Math.abs(s - 510/(60*60)) < 1e-6) label = '60m';
+    if (s === 0) label = '∞';
+    else if (Math.abs(s - 510/(60*60)) < 1e-6) label = '60m';
     else if (Math.abs(s - 510/(90*60)) < 1e-6) label = '90m';
     ui.btnTimeMode.textContent = `⏱️ ${label}`;
   }
@@ -379,6 +386,23 @@ export function createGame({ canvas, ctx, ui }) {
       const exists = (state.objectives||[]).some(o=>o.id==='printer_check');
       if (!exists) state.objectives.unshift({ id:'printer_check', label:'Sprawdź drukarkę w boksach', x: 20, y: 14 });
     }
+    // auto route to CEO at 17:30 for limited modes
+    if ((state.timeScale ?? 510/(30*60)) > 0 && t >= 17*60 + 30 && !state._autoCEO) {
+      state._autoCEO = true;
+      goToCEO();
+    }
+  }
+
+  function goToCEO() {
+    const ceo = state.npcs.find(n => n.id === 'ceo');
+    state.cinematic.active = true;
+    state.cinematic.zoom = 2.0;
+    state.cinematic.focus = ceo ? { x: ceo.x, y: ceo.y } : { x: state.player.x, y: state.player.y };
+    setTimeout(() => {
+      state.cinematic.active = false;
+      if ((state.flags||{}).board_invite) state.dialogue.start('ceo', 'c1');
+      else state.dialogue.start('ceo', 'start');
+    }, 350);
   }
 
   // Interaktywne obiekty: kuchnia (lodówka/ekspres), roślina Stefan
