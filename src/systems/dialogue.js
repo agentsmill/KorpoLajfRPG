@@ -47,6 +47,11 @@ export function createDialogue(state) {
         .filter(c => meetsFlagReqs(c.requiresFlags, state))
         .filter(c => meetsStressReqs(c.requiresStress, state))
         .filter(c => meetsItemReqs(c.requiresItems, state));
+      // jeśli po filtrze nic nie zostało, potraktuj jako koniec/następny
+      if (filtered.length === 0) {
+        if (node.next) { active.nodeId = node.next; step(); return; }
+        end(); return;
+      }
       openChoice(state, node.title || node.speaker || 'Wybór', node.text || '', filtered, (pick) => {
         const choice = node.choices.find(c => c.id === pick || c.label === pick) || node.choices[0];
         if (choice.effects) applyEffects(choice.effects);
