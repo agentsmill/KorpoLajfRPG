@@ -105,14 +105,14 @@ export function createGame({ canvas, ctx, ui }) {
         if (e.key.toLowerCase() === 'f3') state._secret?.llm3?.();
       });
       window.addEventListener('keyup', (e) => state.keys.delete(e.key.toLowerCase()));
-      // WASD aliases
+      // WASD aliases (repeatable)
       const keyMap = { w:'arrowup', s:'arrowdown', a:'arrowleft', d:'arrowright' };
-      window.addEventListener('keydown', (e)=>{ const m=keyMap[e.key.toLowerCase()]; if(m){
+      window.addEventListener('keydown', (e)=>{ const k=e.key.toLowerCase(); const m=keyMap[k]; if(m){
         const tag = (document.activeElement && document.activeElement.tagName) || '';
         if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON') return;
-        e.preventDefault(); state.keys.add(m);
+        e.preventDefault(); state.keys.add(m); state.keys.add(k);
       }});
-      window.addEventListener('keyup', (e)=>{ const m=keyMap[e.key.toLowerCase()]; if(m){ state.keys.delete(m);} });
+      window.addEventListener('keyup', (e)=>{ const k=e.key.toLowerCase(); const m=keyMap[k]; if(m){ state.keys.delete(m); state.keys.delete(k);} });
       // assign sprites
       state.player.sprite = state.sprites.makeSprite('#06d6a0');
       for (const n of state.npcs) n.sprite = state.sprites.makeSprite(n.color, `${n.id}::${n.faction||'neutral'}`);
@@ -232,7 +232,8 @@ export function createGame({ canvas, ctx, ui }) {
       }
       // interaktywne obiekty (kuchnia/roślina)
       if (tryUseInteractive()) return;
-      const target = state.npcs.find(n => Math.hypot(n.x - state.player.x, n.y - state.player.y) < 1.6);
+      // szerszy zasięg rozmowy i łagodny snap w kierunku celu
+      const target = state.npcs.find(n => Math.hypot(n.x - state.player.x, n.y - state.player.y) < 2.0);
       if (target) {
           state._currentNpcId = target.id;
         // route to dialogue trees by NPC id

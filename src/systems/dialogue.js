@@ -185,10 +185,14 @@ export function createDialogue(state) {
   // skill checks
   function rollSkill(skill, dc) {
     const map = { Empatia: state.skills?.emp || 0, Logika: state.skills?.log || 0, Retoryka: state.skills?.ret || 0, Grit: state.skills?.grit || 0 };
-    const mod = (map[skill] ?? 0) - Math.floor((state.player.stress || 0) / 25);
+    // Easier baseline: +1 szczęścia, łagodniejsza kara za stres
+    const base = 1;
+    const stressPenalty = Math.floor((state.player.stress || 0) / 33);
+    const mod = base + (map[skill] ?? 0) - stressPenalty;
     const die = 1 + Math.floor(Math.random() * 6);
     const total = die + mod;
-    return { die, mod, total, ok: dc ? total >= dc : true };
+    const target = typeof dc === 'number' ? Math.max(2, dc - 1) : null; // delikatne obniżenie DC
+    return { die, mod, total, ok: target ? total >= target : true };
   }
 
   function meetsFlagReqs(reqFlags, state) {
