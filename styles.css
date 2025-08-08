@@ -42,24 +42,24 @@ canvas#gameCanvas {
 .hud-item span { color: var(--accent2); }
 
 #overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: rgba(0,0,0,.6);
-  z-index: 8;
+  z-index: 15; /* above joystick (12), below dialog (20) and modal (30) */
 }
 
 #dialog {
-  position: absolute;
+  position: fixed;
   left: 50%;
-  bottom: 12px;
+  bottom: calc(env(safe-area-inset-bottom) + 16px);
   transform: translateX(-50%);
-  width: 90%;
-  max-width: 720px;
+  width: min(720px, 96vw);
   background: linear-gradient(180deg, #0e1426, #0b1120);
   border: 2px solid #1f2937;
   border-radius: 8px;
   padding: 10px 12px;
   box-shadow: 0 8px 30px rgba(0,0,0,.4);
+  z-index: 20;
 }
 #dialog { animation: fadeIn .18s ease-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(6px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
@@ -99,7 +99,7 @@ canvas#gameCanvas {
 /* Stały tracker usunięty – teraz modal */
 
 .modal {
-  position: absolute;
+  position: fixed;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -110,7 +110,7 @@ canvas#gameCanvas {
   border-radius: 10px;
   padding: 12px 14px;
   box-shadow: 0 14px 60px rgba(0,0,0,.6);
-  z-index: 10;
+  z-index: 30;
 }
 .modal-title { font-weight: 800; margin-bottom: 8px; color: var(--accent); }
 .modal-body { color: var(--fg); line-height: 1.6; max-height: 62vh; overflow-y: auto; }
@@ -174,15 +174,32 @@ canvas#gameCanvas {
   #wrapper { max-width: none; width: 100%; }
   canvas#gameCanvas { width: 100vw; height: auto; }
   .factions { position: static; width: calc(100% - 16px); margin: 8px; }
-  #hud { position: fixed; left: 8px; right:8px; bottom: 8px; top: auto; border-radius: 12px; padding: 10px; gap: 8px; justify-content: space-between; }
-  #dialog { width: 96%; bottom: 120px; z-index:9; }
+  /* Mobile-first HUD at the top, compact and scrollable */
+  #hud {
+    position: fixed;
+    left: 8px; right: 8px; top: calc(env(safe-area-inset-top) + 8px); bottom: auto;
+    border-radius: 12px; padding: 8px; gap: 6px;
+    justify-content: flex-start; align-items: center;
+    overflow-x: auto; white-space: nowrap;
+    z-index: 8;
+  }
+  #hud .hud-item, #hud .btn { font-size: 12px; padding: 6px 8px; }
+  /* Show only key HUD stats */
+  #hud .hud-item { display: none; }
+  #hud .hud-item:has(#hudCoffee),
+  #hud .hud-item:has(#hudStress),
+  #hud .hud-item:has(#hudClock) { display: inline-flex; }
+  /* Hide non-essential buttons on small screens */
+  #btnMusic, #btnTimeMode, #btnPopups, #btnFinish, #btnFactions, #btnLog, #btnBingo { display: none; }
+  /* Dialog sits near bottom but above safe area */
+  #dialog { width: 96vw; bottom: calc(env(safe-area-inset-bottom) + 16px); }
 }
 
 /* Mobile joystick */
 .joy {
   position: fixed;
-  left: 12px; bottom: 90px; z-index: 9;
-  width: 96px; height: 96px;
+  left: 12px; bottom: calc(env(safe-area-inset-bottom) + 16px); z-index: 12;
+  width: clamp(72px, 22vw, 108px); height: clamp(72px, 22vw, 108px);
   border-radius: 50%;
   background: rgba(17,23,40,.35);
   border: 1px solid #2a2f36;
@@ -190,7 +207,7 @@ canvas#gameCanvas {
 }
 .joy-knob {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
-  width: 52px; height: 52px; border-radius: 50%;
+  width: clamp(40px, 12vw, 56px); height: clamp(40px, 12vw, 56px); border-radius: 50%;
   background: rgba(165,180,252,.8);
   box-shadow: 0 4px 14px rgba(0,0,0,.3);
 }
