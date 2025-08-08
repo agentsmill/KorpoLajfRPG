@@ -123,6 +123,11 @@ export function createGame({ canvas, ctx, ui }) {
       // Phone
       ui.btnPhone?.addEventListener('click', () => { updatePhoneUI(); ui.phoneModal?.classList.remove('hidden'); ui.overlay?.classList.remove('hidden'); });
       ui.btnPhoneClose?.addEventListener('click', () => { ui.phoneModal?.classList.add('hidden'); ui.overlay?.classList.add('hidden'); });
+      // Tap anywhere on the dialog to advance (works on mobile)
+      ui.dialog?.addEventListener('click', (e) => {
+        if (e.target && (e.target.id === 'dialogClose')) return;
+        state._interactRequested = true;
+      });
       // Factions modal
       ui.btnFactions?.addEventListener('click', () => { ui.overlay?.classList.remove('hidden'); ui.factionsModal?.classList.remove('hidden'); });
       ui.btnFactionsClose?.addEventListener('click', () => { ui.factionsModal?.classList.add('hidden'); ui.overlay?.classList.add('hidden'); });
