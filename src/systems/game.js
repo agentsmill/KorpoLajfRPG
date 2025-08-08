@@ -155,10 +155,20 @@ export function createGame({ canvas, ctx, ui }) {
     if (state.keys.has('arrowdown') || state.keys.has('s')) move.y += 1;
     if (state.keys.has('arrowleft') || state.keys.has('a')) move.x -= 1;
     if (state.keys.has('arrowright') || state.keys.has('d')) move.x += 1;
-    // virtual joystick influence (mobile)
+    // On-screen controls (D-Pad or programmatic tap-to-move)
     if (window._joy && window._joy.active) {
       move.x += Math.max(-1, Math.min(1, window._joy.dx || 0));
       move.y += Math.max(-1, Math.min(1, window._joy.dy || 0));
+    }
+
+    // tap-to-move steering if present
+    const t = state._getTapTarget ? state._getTapTarget() : null;
+    if (t) {
+      const dx = t.x - state.player.x;
+      const dy = t.y - state.player.y;
+      const dist = Math.hypot(dx,dy);
+      if (dist > 0.15) { move.x += dx/dist; move.y += dy/dist; }
+      else { /* close enough: clear target */ state._getTapTarget = ()=>null; }
     }
 
     // normalize
@@ -252,7 +262,23 @@ export function createGame({ canvas, ctx, ui }) {
     init().then(() => {
       state.running = true;
       state.lastTime = performance.now();
+      // Tap-to-move: click/touch on canvas sets a target; player podąża
+      let tapTarget = null;
+      function setTapTarget(e){
+        const rect = canvas.getBoundingClientRect();
+        const cx = (e.touches?e.touches[0].clientX:e.clientX) - rect.left;
+        const cy = (e.touches?e.touches[0].clientY:e.clientY) - rect.top;
+        const scale = Math.max(1, state.zoom||1);
+        const worldX = (cx * (canvas.width/rect.width) / scale + state.camera.x) / 16;
+        const worldY = (cy * (canvas.height/rect.height) / scale + state.camera.y) / 16;
+        tapTarget = { x: worldX, y: worldY };
+      }
+      canvas.addEventListener('touchstart', (e)=>{ if (e.target.closest('.modal')) return; setTapTarget(e); }, {passive:false});
+      canvas.addEventListener('mousedown', (e)=>{ if (e.target.closest('.modal')) return; setTapTarget(e); });
+
       requestAnimationFrame(loop);
+      // integrate tapTarget into movement
+      state._getTapTarget = ()=>tapTarget;
     });
   }
 

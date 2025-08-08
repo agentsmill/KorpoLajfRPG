@@ -10,8 +10,10 @@
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
 body { display:grid; place-items:center; background: radial-gradient(1200px 800px at 50% 40%, #0e1426, var(--bg)); color: var(--fg); font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+/* Prevent page scroll/zoom while using on-screen controls; modals will override */
+body, #wrapper, canvas#gameCanvas { overscroll-behavior: none; touch-action: none; }
 
-#wrapper { position: relative; width: 100%; max-width: 820px; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+#wrapper { position: relative; width: 100%; max-width: 820px; height: 100vh; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
 
 canvas#gameCanvas {
   image-rendering: pixelated;

@@ -71,8 +71,13 @@ game.start();
 // Responsive canvas with DPR scaling
 function resizeCanvas() {
   const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-  const cssW = canvas.clientWidth || 768;
-  const cssH = Math.round(cssW * 0.75);
+  const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  // canvas aspect 4:3, fill width, keep within height minus HUD and controls
+  let cssW = vw;
+  let cssH = Math.round(cssW * 0.75);
+  if (cssH > vh * 0.72) { cssH = Math.round(vh * 0.72); cssW = Math.round(cssH * (4/3)); }
+  canvas.style.width = cssW + 'px';
   canvas.style.height = cssH + 'px';
   const needW = Math.round(cssW * dpr);
   const needH = Math.round(cssH * dpr);
@@ -83,21 +88,32 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-// Basic virtual joystick for mobile
+// D-Pad controls (coarse pointer devices)
 (() => {
-  const joy = ui.joy, knob = ui.joyKnob; if (!joy || !knob) return;
-  let active = false, origin = {x:0,y:0};
-  let center = {x:0,y:0};
-  function setCenter(){ const r = joy.getBoundingClientRect(); center = { x: r.left + r.width/2, y: r.top + r.height/2 }; }
-  setCenter(); window.addEventListener('resize', setCenter);
-  const maxR = 40;
-  function start(e){ active = true; origin = getPoint(e); move(e); }
-  function end(){ active = false; knob.style.transform = 'translate(-50%,-50%)'; window._joy = {dx:0,dy:0,active:false}; }
-  function move(e){ if (!active) return; const p = getPoint(e); const dx = p.x - center.x, dy = p.y - center.y; const len = Math.max(1, Math.hypot(dx,dy)); const cl = Math.min(maxR, len); const nx = dx/len*cl, ny = dy/len*cl; knob.style.transform = `translate(${nx}px, ${ny}px)`; window._joy = { dx: dx/80, dy: dy/80, active:true }; }
-  function getPoint(e){ const t = (e.touches && e.touches[0]) || e.changedTouches?.[0] || e; return { x: t.clientX, y: t.clientY }; }
-  joy.addEventListener('touchstart', start, {passive:true});
-  joy.addEventListener('touchmove', move, {passive:true});
-  joy.addEventListener('touchend', end, {passive:true});
+  const dpad = document.getElementById('dpad');
+  if (!dpad) return;
+  const held = { x:0, y:0 };
+  let raf = 0;
+  const speed = 1; // normalized unit per tick; game applies delta & speed
+  function tick(){
+    if ((held.x !== 0 || held.y !== 0) && window._joy) {
+      window._joy.dx = held.x; window._joy.dy = held.y; window._joy.active = true;
+    }
+    raf = requestAnimationFrame(tick);
+  }
+  function startDir(x,y){ held.x = x; held.y = y; window._joy = { dx:x, dy:y, active:true }; if (!raf) raf = requestAnimationFrame(tick); }
+  function endDir(){ held.x = 0; held.y = 0; window._joy = { dx:0, dy:0, active:false }; }
+  dpad.querySelectorAll('.dpad-btn').forEach(btn => {
+    const x = parseFloat(btn.dataset.x), y = parseFloat(btn.dataset.y);
+    const start = (e)=>{ e.preventDefault(); startDir(x,y); };
+    const end = (e)=>{ e.preventDefault(); endDir(); };
+    btn.addEventListener('touchstart', start, {passive:false});
+    btn.addEventListener('touchend', end, {passive:false});
+    btn.addEventListener('touchcancel', end, {passive:false});
+    btn.addEventListener('mousedown', start);
+    btn.addEventListener('mouseup', end);
+    btn.addEventListener('mouseleave', end);
+  });
 })();
 
 // Mobile confirm button triggers in-game interaction (like pressing E)

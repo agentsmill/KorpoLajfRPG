@@ -150,11 +150,15 @@
         </div>
       </div>
       <!-- Mobile joystick -->
-      <div id="joy" class="joy">
-        <div id="joyKnob" class="joy-knob"></div>
-      </div>
-      <!-- Mobile confirm action (advance dialog/choice) -->
-      <button id="actionConfirm" class="action-btn" aria-label="Dalej">▶︎</button>
+        <!-- D-Pad (Game Boy style) -->
+        <div id="dpad" class="dpad" aria-label="D-Pad">
+          <button class="dpad-btn up" data-x="0" data-y="-1" aria-label="Góra">▲</button>
+          <button class="dpad-btn left" data-x="-1" data-y="0" aria-label="Lewo">◀</button>
+          <button class="dpad-btn right" data-x="1" data-y="0" aria-label="Prawo">▶</button>
+          <button class="dpad-btn down" data-x="0" data-y="1" aria-label="Dół">▼</button>
+        </div>
+        <!-- Mobile confirm action (advance dialog/choice / interact) -->
+        <button id="actionConfirm" class="action-btn" aria-label="Dalej">A</button>
     </div>
     <script type="module" src="./src/main.js"></script>
   </body>
