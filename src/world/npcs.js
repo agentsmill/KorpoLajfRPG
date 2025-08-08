@@ -25,6 +25,15 @@ export function createNPCs() {
     { id: 'ter1', name: 'Taras Ola', x: 24, y: 46, color: '#06b6d4', faction:'hr', bio:'Uczy oddychać między taskami.', mood:'soft', hair:'#0e7490', skin:'#f6d7b0', shirt:'#06b6d4' },
     { id: 'ops2', name: 'DevOps Nina', x: 64, y: 28, color: '#f59e0b', faction:'it', bio:'Uspokaja alerty głosem.', mood:'neutral', hair:'#9a3412', skin:'#f1c27d', shirt:'#f59e0b' },
     { id: 'sec3', name: 'Ochrona Zbyszek', x: 10, y: 34, color: '#6366f1', faction:'ops', bio:'„Nie da się” to tylko propozycja.', mood:'wry', hair:'#111827', skin:'#deb887', shirt:'#4f46e5' },
+    // +30% NPC — każda osoba z krótką historią
+    { id: 'ds1', name: 'Data Science Magda', x: 68, y: 32, color: '#22c55e', faction:'it', bio:'Uczy liczby mówić ludzkim głosem. W weekendy uczy jogi.', mood:'soft', hair:'#14532d', skin:'#f6d7b0', shirt:'#22c55e' },
+    { id: 'pr1', name: 'Zakupy Marek', x: 66, y: 20, color: '#10b981', faction:'mgmt', bio:'Negocjuje rabaty i godność w jednym zdaniu.', mood:'neutral', hair:'#065f46', skin:'#f1c27d', shirt:'#10b981' },
+    { id: 'it2', name: 'Junior Alicja', x: 36, y: 32, color: '#60a5fa', faction:'it', bio:'Pierwszy PR z drżącą ręką. Drugi z dumą.', mood:'smile', hair:'#1e293b', skin:'#f1c27d', shirt:'#3b82f6' },
+    { id: 'hr2', name: 'Wellbeing Ewa', x: 19, y: 6, color: '#f472b6', faction:'hr', bio:'Przypomina, że człowiek to nie sprint. Czasem stawia herbatę.', mood:'soft', hair:'#be185d', skin:'#f6d7b0', shirt:'#ec4899' },
+    { id: 'fac1', name: 'Utrzymanie Marek', x: 6, y: 44, color: '#94a3b8', faction:'ops', bio:'Naprawia żarówki i nastroje. Zna wszystkie skrytki.', mood:'wry', hair:'#0f172a', skin:'#deb887', shirt:'#94a3b8' },
+    { id: 'mkt3', name: 'Copy Gosia', x: 70, y: 6, color: '#fda4af', faction:'mgmt', bio:'Pisze slogany, które pamiętasz w poniedziałek.', mood:'smile', hair:'#9f1239', skin:'#f6d7b0', shirt:'#fda4af' },
+    { id: 'rnd3', name: 'Research Oli', x: 64, y: 30, color: '#84cc16', faction:'it', bio:'Znajduje odpowiedzi na pytania, których jeszcze nie zadałeś.', mood:'neutral', hair:'#3f6212', skin:'#f1c27d', shirt:'#84cc16' },
+    { id: 'vip1', name: 'Asystent CFO', x: 50, y: 4, color: '#a5b4fc', faction:'mgmt', bio:'Szepcze liczby do ucha szefów. Po godzinach słucha jazzu.', mood:'stern', hair:'#3730a3', skin:'#eec39a', shirt:'#818cf8' },
   ];
 }
 
